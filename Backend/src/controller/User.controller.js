@@ -267,7 +267,7 @@ const RegisterParent = AsyncHandler(async (req, res) => {
 const getNearbyTeachers = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
-
+  
     const teachers = await Teacher.aggregate([
       {
         $geoNear: {
@@ -276,14 +276,16 @@ const getNearbyTeachers = async (req, res) => {
             coordinates: [Number(longitude), Number(latitude)],
           },
           distanceField: 'distance',
-          maxDistance: 5000, // 5 km
+          maxDistance: 10000, // 5 km
           spherical: true,
           key: 'coordinates',
         },
       },
     ]);
 
-    res.status(200).json(new Apireponse(200,"The Nearest 5 km Teachers are",teachers));
+    res
+      .status(200)
+      .json(new Apireponse(200, 'The Nearest 5 km Teachers are', teachers));
   } catch (error) {
     res.status(500).json({
       message: error.message,
