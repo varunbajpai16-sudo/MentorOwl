@@ -99,14 +99,10 @@ export default function SignupPage() {
       {/* Header */}
       <header className="border-b border-slate-100 bg-white">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-3"
-          >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-800 to-indigo-950">
-              <GraduationCap className="h-6 w-6 text-amber-400" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg">
+              <BookOpen className="h-6 w-6 text-amber-300" />
             </div>
-
             <div>
               <div className="text-xl font-extrabold leading-tight text-slate-900">
                 TutorMate
@@ -115,7 +111,7 @@ export default function SignupPage() {
                 Find the right teacher for you
               </div>
             </div>
-          </button>
+          </div>
 
           <nav className="hidden items-center gap-9 text-sm font-medium lg:flex">
             {navLinks.map((link) => {
@@ -195,10 +191,7 @@ export default function SignupPage() {
                   const Icon = benefit.icon;
 
                   return (
-                    <div
-                      key={benefit.text}
-                      className="flex items-center gap-3"
-                    >
+                    <div key={benefit.text} className="flex items-center gap-3">
                       <div
                         className={`flex h-10 w-10 items-center justify-center rounded-full ${benefit.bg}`}
                       >

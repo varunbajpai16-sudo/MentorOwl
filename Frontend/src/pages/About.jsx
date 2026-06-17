@@ -65,14 +65,11 @@ const benefits = [
 ];
 
 export default function HowItWorks() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section
-        className="py-20"
-        style={{ backgroundColor: "#F4F2FC" }}
-      >
+      <section className="py-20" style={{ backgroundColor: "#F4F2FC" }}>
         <div className="mx-auto max-w-7xl px-6 lg:px-10 text-center">
           <span
             className="rounded-full px-4 py-2 text-sm font-semibold"
@@ -126,10 +123,7 @@ export default function HowItWorks() {
                   className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl"
                   style={{ backgroundColor: "#EEEAFC" }}
                 >
-                  <Icon
-                    className="h-8 w-8"
-                    style={{ color: PURPLE }}
-                  />
+                  <Icon className="h-8 w-8" style={{ color: PURPLE }} />
                 </div>
 
                 <h3 className="text-xl font-bold text-slate-900">
@@ -146,10 +140,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Process Flow */}
-      <section
-        className="py-20"
-        style={{ backgroundColor: "#F4F2FC" }}
-      >
+      <section className="py-20" style={{ backgroundColor: "#F4F2FC" }}>
         <div className="mx-auto max-w-6xl px-6 lg:px-10">
           <div className="rounded-3xl bg-white p-10 shadow-sm">
             <div className="grid gap-8 md:grid-cols-4">
@@ -165,10 +156,7 @@ export default function HowItWorks() {
                       className="flex h-20 w-20 items-center justify-center rounded-full"
                       style={{ backgroundColor: "#EEEAFC" }}
                     >
-                      <Icon
-                        className="h-10 w-10"
-                        style={{ color: PURPLE }}
-                      />
+                      <Icon className="h-10 w-10" style={{ color: PURPLE }} />
                     </div>
 
                     <h4 className="mt-5 font-semibold text-slate-900">
@@ -176,9 +164,7 @@ export default function HowItWorks() {
                     </h4>
 
                     {index !== steps.length - 1 && (
-                      <ArrowRight
-                        className="mt-6 hidden h-5 w-5 text-slate-400 md:block"
-                      />
+                      <ArrowRight className="mt-6 hidden h-5 w-5 text-slate-400 md:block" />
                     )}
                   </div>
                 );
@@ -213,19 +199,14 @@ export default function HowItWorks() {
                   className="flex h-14 w-14 items-center justify-center rounded-full"
                   style={{ backgroundColor: "#EEEAFC" }}
                 >
-                  <Icon
-                    className="h-7 w-7"
-                    style={{ color: PURPLE }}
-                  />
+                  <Icon className="h-7 w-7" style={{ color: PURPLE }} />
                 </div>
 
                 <h3 className="mt-5 text-lg font-semibold text-slate-900">
                   {item.title}
                 </h3>
 
-                <p className="mt-2 text-slate-500">
-                  {item.desc}
-                </p>
+                <p className="mt-2 text-slate-500">{item.desc}</p>
               </div>
             );
           })}
@@ -233,10 +214,7 @@ export default function HowItWorks() {
       </section>
 
       {/* CTA */}
-      <section
-        className="py-20"
-        style={{ backgroundColor: "#F4F2FC" }}
-      >
+      <section className="py-20" style={{ backgroundColor: "#F4F2FC" }}>
         <div className="mx-auto max-w-4xl px-6 text-center">
           <h2 className="text-4xl font-extrabold text-slate-900">
             Ready to Find Your Perfect Tutor?
@@ -249,7 +227,7 @@ export default function HowItWorks() {
           <button
             className="mt-8 rounded-xl px-8 py-4 font-semibold text-white transition hover:cursor-pointer"
             style={{ backgroundColor: PURPLE }}
-            onClick={()=>navigate("/findteacher")}
+            onClick={() => navigate("/findteacher")}
           >
             Find Teachers
           </button>

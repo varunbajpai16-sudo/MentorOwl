@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   GraduationCap,
+  BookOpen,
   ShieldCheck,
   CalendarDays,
   Users,
@@ -23,7 +24,7 @@ const navLinks = [
   { label: "Home", link: "/" },
   { label: "Find Teachers", link: "/findteacher" },
   { label: "Subjects", link: "/subjects" },
-  { label: "How it Works",link:"/howitwork" },
+  { label: "How it Works", link: "/howitwork" },
   { label: "Become a Teacher", link: "/becomeateacher" },
 ];
 const stats = [
@@ -157,13 +158,8 @@ export default function BecomeATeacher() {
       <header className="border-b border-slate-100 bg-white sticky top-0 z-50">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
           <div className="flex items-center gap-3">
-            <div
-              className="flex h-11 w-11 items-center justify-center rounded-xl"
-              style={{
-                background: "linear-gradient(135deg, #1e1b3a, #2d2060)",
-              }}
-            >
-              <GraduationCap className="h-6 w-6 text-amber-400" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg">
+              <BookOpen className="h-6 w-6 text-amber-300" />
             </div>
             <div>
               <div className="text-xl font-extrabold leading-tight text-slate-900">
@@ -196,7 +192,7 @@ export default function BecomeATeacher() {
 
           <div className="flex items-center gap-5">
             <a
-              onClick={()=>navigate("/login")}
+              onClick={() => navigate("/login")}
               className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:cursor-pointer hover:text-violet-600 "
             >
               <ShieldCheck className="h-4 w-4" />
@@ -211,7 +207,7 @@ export default function BecomeATeacher() {
               onMouseLeave={(e) =>
                 (e.currentTarget.style.backgroundColor = PURPLE)
               }
-               onClick={()=>navigate("/signup")}
+              onClick={() => navigate("/signup")}
             >
               Sign Up
             </button>
@@ -257,7 +253,8 @@ export default function BecomeATeacher() {
                 Apply Now <ArrowRight className="h-4 w-4" />
               </a>
               <button
-                className="inline-flex items-center gap-2 rounded-lg border px-6 py-3 text-sm font-semibold transition-colors hover:bg-indigo-50"
+                onClick={() => navigate("/howitwork")}
+                className="inline-flex items-center gap-2 rounded-lg hover:cursor-pointer border px-6 py-3 text-sm font-semibold transition-colors hover:bg-indigo-200"
                 style={{ borderColor: "#D9D2F5", color: PURPLE }}
               >
                 Learn How It Works

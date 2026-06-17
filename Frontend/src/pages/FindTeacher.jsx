@@ -19,7 +19,7 @@ const navLinks = [
   { label: "Home", active: true, link: "/" },
   { label: "Find Teachers", link: "/findteacher" },
   { label: "Subjects", link: "/subjects" },
-  { label: "How it Works" ,link:"/howitwork"},
+  { label: "How it Works", link: "/howitwork" },
   { label: "Become a Teacher", link: "/becomeateacher" },
 ];
 
@@ -501,8 +501,8 @@ export default function FindTeachersPage() {
       <header className="border-b border-slate-100 bg-white">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-800 to-indigo-950">
-              <GraduationCap className="h-6 w-6 text-amber-400" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg">
+              <BookOpen className="h-6 w-6 text-amber-300" />
             </div>
             <div>
               <div className="text-xl font-extrabold leading-tight text-slate-900">
@@ -551,7 +551,7 @@ export default function FindTeachersPage() {
               onMouseLeave={(e) =>
                 (e.currentTarget.style.backgroundColor = PURPLE)
               }
-               onClick={()=>navigate("/signup")}
+              onClick={() => navigate("/signup")}
             >
               Sign Up
             </button>
