@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useSelector, useDispatch } from "react-redux";
-import { loginSuccess,logout} from "../features/auth/auth.silice";
+import { loginSuccess, logout } from "../features/auth/auth.silice";
 import api from "../services/axios";
+import LoginLoader from "../components/Login_Loader"
 import {
   GraduationCap,
   ShieldCheck,
@@ -89,13 +90,13 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false);
-
   const user = useSelector((state) => state.auth.user);
-  
+  const [loading, setLoading] = useState(true);
+
   const HandelLogout = () => {
     localStorage.clear("user");
     alert("User Logout Sucessfully");
-    dispatch(logout())
+    dispatch(logout());
   };
 
   const checklogin = () => {
@@ -110,6 +111,7 @@ export default function LoginPage() {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
+        setLoading(true);
         const accessToken = tokenResponse.access_token;
         const response = await api.post("user/login", {
           accessToken,
@@ -132,18 +134,24 @@ export default function LoginPage() {
         } else {
           navigate("/rolechoose", {
             state: {
-             accessToken:tokenResponse
+              accessToken: tokenResponse,
             },
           });
         }
       } catch (error) {
         console.log(error);
-      }
+      } finally {
+      setLoading(false);
+    }
     },
     onError: () => {
       console.log("Google Login Failed");
     },
   });
+
+  if (loading) {
+  return <LoginLoader />;
+}
 
   return (
     <div className="min-h-screen bg-white font-sans antialiased">

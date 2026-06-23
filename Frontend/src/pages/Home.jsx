@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import HomePageLoader from "../components/Loader";
 import {
   GraduationCap,
   BookOpen,
@@ -484,6 +485,20 @@ export default function TutorMateHomepage() {
     }
   }, [location]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <HomePageLoader />;
+  }
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
       {showSuccessPopup && (
@@ -561,7 +576,10 @@ export default function TutorMateHomepage() {
           </nav>
 
           {user ? (
-            <div onClick={()=>navigate("/login")} className="flex items-center gap-3 cursor-pointer">
+            <div
+              onClick={() => navigate("/login")}
+              className="flex items-center gap-3 cursor-pointer"
+            >
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md">
                 {user.name?.charAt(0)?.toUpperCase() || "U"}
               </div>

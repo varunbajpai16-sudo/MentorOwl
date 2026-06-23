@@ -1,2 +1,29 @@
 @import "tailwindcss";
 
+@keyframes bookFlip {
+  0% {
+    transform: perspective(400px) rotateY(0deg);
+  }
+
+  50% {
+    transform: perspective(400px) rotateY(-30deg) scale(1.05);
+  }
+
+  100% {
+    transform: perspective(400px) rotateY(0deg);
+  }
+}
+
+.book-animation {
+  animation: bookFlip 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
