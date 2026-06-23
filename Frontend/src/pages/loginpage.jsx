@@ -140,8 +140,9 @@ export default function LoginPage() {
       } finally {
          setTimeout(() => {
             navigate("/")
+            setLoading(false);
           },3000);
-      setLoading(false);
+      
     }
     },
     onError: () => {
