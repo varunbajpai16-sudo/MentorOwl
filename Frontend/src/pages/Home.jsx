@@ -486,15 +486,20 @@ export default function TutorMateHomepage() {
   }, [location]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(
+  !sessionStorage.getItem("homepageLoaded")
+);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+useEffect(() => {
+  if (!loading) return;
 
-    return () => clearTimeout(timer);
-  }, []);
+  const timer = setTimeout(() => {
+    sessionStorage.setItem("homepageLoaded", "true");
+    setLoading(false);
+  }, 2000);
+
+  return () => clearTimeout(timer);
+}, [loading]);
 
   if (loading) {
     return <HomePageLoader />;
