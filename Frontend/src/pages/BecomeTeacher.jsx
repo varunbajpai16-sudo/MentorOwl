@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import api from "../services/axios";
+import LoginLoader from "../components/Login_Loader";
 import {
   GraduationCap,
   BookOpen,
@@ -200,7 +202,7 @@ export default function BecomeATeacher() {
   const [fileName, setFileName] = useState("");
   const [consent, setConsent] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
-
+  const [loading,setloading] = useState(false);
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -293,16 +295,61 @@ export default function BecomeATeacher() {
 
   // Get user coordinates
   const getCoordinates = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setCoordinates([position.coords.longitude, position.coords.latitude]);
-      });
-    }
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject("Geolocation is not supported");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const longitude = position.coords.longitude;
+          const latitude = position.coords.latitude;
+
+          setCoordinates([longitude, latitude]);
+
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+            );
+
+            const data = await res.json();
+
+            const address = data.address;
+
+            setFormData((prev) => ({
+              ...prev,
+              location: `${address.city || address.town || address.village}, ${address.state}`,
+            }));
+
+            resolve([longitude, latitude]);
+          } catch (err) {
+            reject(err);
+          }
+        },
+        (err) => reject(err),
+      );
+    });
   };
+
+  useEffect(() => {
+    getCoordinates().catch(() => {
+      console.log("Location permission denied");
+    });
+  }, []);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!coordinates) {
+      try {
+        await getCoordinates();
+      } catch {
+        alert("Please allow location access.");
+        return;
+      }
+    }
 
     // Validate required fields
     if (
@@ -336,15 +383,14 @@ export default function BecomeATeacher() {
       experienceDetails: formData.experienceDetails.filter(
         (exp) => exp.institution && exp.years,
       ),
-      coordinates: coordinates
-        ? {
-            type: "Point",
-            coordinates: coordinates,
-          }
-        : null,
+      coordinates: {
+        type: "Point",
+        coordinates,
+      },
     };
 
     try {
+      setloading(true)
       const res = await api.post("user/registerteacher", teacherData);
       console.log(res.data);
       navigate("/", {
@@ -352,7 +398,9 @@ export default function BecomeATeacher() {
           accountCreated: true,
         },
       });
+      setloading(false);
     } catch (error) {
+      setloading(false);
       alert(error);
     }
 
@@ -363,6 +411,10 @@ export default function BecomeATeacher() {
         ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, 50);
   };
+
+  if (loading) {
+    return <LoginLoader />;
+  }
 
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
@@ -641,11 +693,10 @@ export default function BecomeATeacher() {
                 </label>
                 <div className="flex gap-2">
                   <input
-                    type="text"
                     name="location"
                     value={formData.location}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Meerut, Uttar Pradesh"
+                    readOnly
+                    placeholder="Detecting location..."
                     required
                     className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                   />
