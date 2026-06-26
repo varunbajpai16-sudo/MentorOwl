@@ -321,21 +321,19 @@ export default function BecomeATeacher() {
         async (position) => {
           const longitude = position.coords.longitude;
           const latitude = position.coords.latitude;
-
           setCoordinates([longitude, latitude]);
 
           try {
             const res = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
             );
 
             const data = await res.json();
 
-            const address = data.address;
-
+            const address = data.display_name;
             setFormData((prev) => ({
               ...prev,
-              location: `${address.city || address.town || address.village}, ${address.state}`,
+              location: `${address}`,
             }));
 
             resolve([longitude, latitude]);
@@ -706,7 +704,7 @@ export default function BecomeATeacher() {
                       className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white"
                       style={{ backgroundColor: "#10b981" }}
                     >
-                     Edit profile  
+                      Edit profile
                     </button>
                     <button
                       onClick={() => navigate("/teacher/dashboard")}
