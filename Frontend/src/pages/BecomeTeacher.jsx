@@ -319,7 +319,7 @@ export default function BecomeATeacher() {
 
             setFormData((prev) => ({
               ...prev,
-              location: {address},
+              location: `${address.city || address.town || address.village}, ${address.state}`,
             }));
 
             resolve([longitude, latitude]);
