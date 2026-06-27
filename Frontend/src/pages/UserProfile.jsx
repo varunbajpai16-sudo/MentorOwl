@@ -368,7 +368,7 @@ function TeacherProfile({ user, teacher }) {
             <SectionTitle>Classes Taught</SectionTitle>
             <div className="flex flex-wrap gap-2">
               {classes.map((c) => (
-                <Badge key={c} label={`Class ${c}`} color="indigo" />
+                <Badge key={c} label={`${c}`} color="indigo" />
               ))}
             </div>
           </Card>

@@ -178,11 +178,17 @@ function TeacherCard({ teacher }) {
   return (
     <div className="flex flex-col rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start gap-4">
-        <img
-          src={teacher.userid?.avatar}
-          alt={teacher.userid?.name}
-          className="h-16 w-16 flex-shrink-0 rounded-full object-cover ring-2 ring-slate-100"
-        />
+        {teacher.userid?.avatar ? (
+          <img
+            src={teacher.userid.avatar}
+            alt={teacher.userid.name}
+            className="h-16 w-16 flex-shrink-0 rounded-full object-cover ring-2 ring-slate-100"
+          />
+        ) : (
+          <div className="h-16 w-16 flex-shrink-0 rounded-full bg-slate-200 flex items-center justify-center ring-2 ring-slate-100 text-xs font-semibold text-slate-700 text-center p-1">
+            {teacher.userid?.name}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <h3 className="truncate font-semibold text-slate-900">
@@ -209,7 +215,9 @@ function TeacherCard({ teacher }) {
       </div>
 
       <p className="mt-4 text-sm leading-relaxed text-slate-500">
-        {teacher.bio}
+        {teacher.bio.length > 100
+          ? teacher.bio.slice(0, 100) + "..."
+          : teacher.bio}
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -251,7 +259,7 @@ function TeacherCard({ teacher }) {
         </div>
         <button
           className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors hover:cursor-pointer"
-          onClick={()=>navigate("/teacherprofile",{state:teacher})}
+          onClick={() => navigate("/teacherprofile", { state: teacher })}
           style={{ backgroundColor: PURPLE }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = PURPLE_DARK)
