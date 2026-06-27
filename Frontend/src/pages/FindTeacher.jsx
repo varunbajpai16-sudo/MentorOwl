@@ -185,7 +185,7 @@ function TeacherCard({ teacher }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <h3 className="truncate font-semibold text-slate-900">
-              {teacher.name}
+              {teacher.userid.name}
             </h3>
             {teacher.verified && (
               <ShieldCheck className="h-4 w-4 flex-shrink-0 text-emerald-500" />
