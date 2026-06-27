@@ -192,7 +192,10 @@ function TeacherCard({ teacher }) {
             )}
           </div>
           <div className="mt-0.5 text-sm text-slate-500">
-            {teacher.experienceYears}+ Years Exp.
+            {Math.max(
+              ...(teacher.experienceDetails?.map((e) => e.years) ?? [0]),
+            )}
+            + Years Exp.
           </div>
           <div className="mt-1 flex items-center gap-1 text-sm">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
