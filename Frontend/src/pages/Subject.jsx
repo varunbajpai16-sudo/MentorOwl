@@ -203,6 +203,7 @@ const subjectsData = [
 ];
 
 function SubjectCard({ subject }) {
+  const navigate = useNavigate()
   const Icon = subject.icon;
   return (
     <div className="flex flex-col rounded-2xl border border-slate-100 bg-white p-5 text-center shadow-sm transition-shadow hover:shadow-md">
@@ -223,6 +224,7 @@ function SubjectCard({ subject }) {
       </div>
 
       <button
+       onClick={()=>navigate("/findteacher")}
         className="mt-4 w-full rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
         style={{ backgroundColor: PURPLE }}
         onMouseEnter={(e) =>
