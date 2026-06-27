@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AvatarBlock from "../components/Avater_Block";
 import {
   BookOpen,
   MapPin,
@@ -105,23 +106,6 @@ function Header({ user, navigate, location }) {
 }
 
 // ─── Avatar Upload ──────────────────────────────────────────────────────────────
-function AvatarBlock({ name, isEditing }) {
-  return (
-    <div className="relative inline-block">
-      <div className="h-28 w-28 rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 flex items-center justify-center text-4xl font-extrabold text-white shadow-lg select-none">
-        {name?.charAt(0)?.toUpperCase() || "U"}
-      </div>
-      {isEditing && (
-        <button
-          className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md border border-slate-200 hover:bg-violet-50 transition-colors"
-          style={{ color: PURPLE }}
-        >
-          <Camera className="h-4 w-4" />
-        </button>
-      )}
-    </div>
-  );
-}
 
 // ─── Badge ──────────────────────────────────────────────────────────────────────
 function Badge({ label, color = "indigo" }) {
@@ -182,7 +166,17 @@ function TeacherProfile({ user, teacher }) {
       {/* Top Hero Card */}
       <Card>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-          <AvatarBlock name={user?.name} isEditing={isEditing} />
+          <AvatarBlock
+            name={user?.name}
+            avatar={user?.avatar}
+            isEditing={isEditing}
+            onAvatarChange={(file) => {
+              setFormData((prev) => ({
+                ...prev,
+                avatar: file,
+              }));
+            }}
+          />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -439,7 +433,7 @@ function TeacherProfile({ user, teacher }) {
 }
 
 // ─── STUDENT PROFILE ────────────────────────────────────────────────────────────
-function StudentProfile({ user, student , navigate }) {
+function StudentProfile({ user, student, navigate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [location, setLocation] = useState(student?.location || "");
   const [studentClass, setStudentClass] = useState(student?.studentClass || "");
@@ -461,7 +455,17 @@ function StudentProfile({ user, student , navigate }) {
       {/* Hero Card */}
       <Card>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-          <AvatarBlock name={user?.name} isEditing={isEditing} />
+          <AvatarBlock
+            name={user?.name}
+            avatar={user?.avatar}
+            isEditing={isEditing}
+            onAvatarChange={(file) => {
+              setFormData((prev) => ({
+                ...prev,
+                avatar: file,
+              }));
+            }}
+          />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -470,7 +474,7 @@ function StudentProfile({ user, student , navigate }) {
                 </h2>
                 <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-slate-500">
                   <span className="flex items-center gap-1">
-                    <GraduationCap className="h-3.5 w-3.5" /> {" "}
+                    <GraduationCap className="h-3.5 w-3.5" />{" "}
                     {student?.studentClass || "—"}
                   </span>
                   <span className="flex items-center gap-1">
@@ -528,7 +532,7 @@ function StudentProfile({ user, student , navigate }) {
                   </div>
                 ) : (
                   <div className="rounded-lg bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900">
-                     {student?.studentClass || "—"}
+                    {student?.studentClass || "—"}
                   </div>
                 )}
               </div>
@@ -597,7 +601,7 @@ function StudentProfile({ user, student , navigate }) {
                 Discover qualified tutors for your subjects.
               </div>
               <button
-              onClick={()=>navigate("/findteacher")}
+                onClick={() => navigate("/findteacher")}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-white"
                 style={{ backgroundColor: PURPLE }}
               >
@@ -653,7 +657,7 @@ function StudentProfile({ user, student , navigate }) {
 }
 
 // ─── PARENT PROFILE ─────────────────────────────────────────────────────────────
-function ParentProfile({ user, parent ,navigate}) {
+function ParentProfile({ user, parent, navigate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [location, setLocation] = useState(parent?.location || "");
   const children = parent?.children || [
@@ -877,7 +881,7 @@ function ParentProfile({ user, parent ,navigate}) {
                 Search for verified teachers near you.
               </div>
               <button
-               onClick={()=>navigate("/findteacher")}
+                onClick={() => navigate("/findteacher")}
                 className="hover:cursor-pointer mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-white"
                 style={{ backgroundColor: PURPLE }}
               >
@@ -900,30 +904,30 @@ export default function ProfilePage() {
   };
 
   // Mock data — replace with real API data
-  
 
   // Simulate role — in real app: user.role
   const role = user?.role;
 
-  let userRole = "Demo User"
-  if(role==="teacher"){
+  let userRole = "Demo User";
+  if (role === "teacher") {
     userRole = JSON.parse(localStorage.getItem("teacher"));
   }
-   if(role==="parent"){
+  if (role === "parent") {
     userRole = JSON.parse(localStorage.getItem("parent"));
   }
-   if(role==="student"){
+  if (role === "student") {
     userRole = JSON.parse(localStorage.getItem("student"));
   }
-  console.log(userRole)
+  console.log(userRole);
   const navigate = useNavigate();
   const location =
     typeof window !== "undefined" ? { pathname: "/profile" } : {};
 
   return (
     <div
-     style={{ backgroundColor: "#F4F2FC" }} 
-    className="min-h-screen bg-white font-sans antialiased">
+      style={{ backgroundColor: "#F4F2FC" }}
+      className="min-h-screen bg-white font-sans antialiased"
+    >
       <Header
         user={user}
         navigate={navigate || (() => {})}
@@ -931,13 +935,18 @@ export default function ProfilePage() {
       />
 
       {/* Page hero banner */}
-    
 
       {/* Profile content */}
       <main className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-        {role === "teacher" && <TeacherProfile user={user} teacher={userRole} navigate={navigate} />}
-        {role === "student" && <StudentProfile user={user} student={userRole} navigate={navigate} />}
-        {role === "parent" && <ParentProfile user={user} parent={userRole} navigate={navigate} />}
+        {role === "teacher" && (
+          <TeacherProfile user={user} teacher={userRole} navigate={navigate} />
+        )}
+        {role === "student" && (
+          <StudentProfile user={user} student={userRole} navigate={navigate} />
+        )}
+        {role === "parent" && (
+          <ParentProfile user={user} parent={userRole} navigate={navigate} />
+        )}
       </main>
 
       {/* AI Chatbot Button */}

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -25,7 +25,7 @@ const navLinks = [
   { label: "Become a Teacher", link: "/teacher" },
 ];
 
-const subjectList = [
+const DEFAULT_SUBJECTS = [
   "Mathematics",
   "Physics",
   "Chemistry",
@@ -41,122 +41,11 @@ const subjectStyles = {
   Chemistry: { bg: "bg-sky-50", text: "text-sky-600" },
   Biology: { bg: "bg-emerald-50", text: "text-emerald-600" },
   "Computer Science": { bg: "bg-orange-50", text: "text-orange-600" },
+  Hindi: { bg: "bg-fuchsia-50", text: "text-fuchsia-600" },
+  Science: { bg: "bg-teal-50", text: "text-teal-600" },
+  Economics: { bg: "bg-lime-50", text: "text-lime-600" },
+  Commerce: { bg: "bg-cyan-50", text: "text-cyan-600" },
 };
-
-const teachers = [
-  {
-    id: 1,
-    name: "Priya Sharma",
-    subject: "Mathematics",
-    experienceYears: 5,
-    rating: 4.9,
-    reviews: 120,
-    price: 500,
-    location: "Mumbai, Maharashtra",
-    mode: ["Online", "Offline"],
-    bio: "Making math simple and fun for every student, from basics to board exam prep.",
-    img: "https://i.pravatar.cc/150?img=47",
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "Rahul Verma",
-    subject: "Physics",
-    experienceYears: 7,
-    rating: 4.8,
-    reviews: 98,
-    price: 600,
-    location: "Delhi, NCR",
-    mode: ["Online"],
-    bio: "Helping students build strong conceptual foundations in mechanics and electromagnetism.",
-    img: "https://i.pravatar.cc/150?img=53",
-    verified: true,
-  },
-  {
-    id: 3,
-    name: "Anjali Mehta",
-    subject: "English",
-    experienceYears: 4,
-    rating: 4.7,
-    reviews: 76,
-    price: 450,
-    location: "Bengaluru, Karnataka",
-    mode: ["Offline"],
-    bio: "Focused on grammar, creative writing and confident spoken communication.",
-    img: "https://i.pravatar.cc/150?img=44",
-    verified: true,
-  },
-  {
-    id: 4,
-    name: "Vikram Singh",
-    subject: "Chemistry",
-    experienceYears: 6,
-    rating: 4.6,
-    reviews: 89,
-    price: 550,
-    location: "Pune, Maharashtra",
-    mode: ["Online", "Offline"],
-    bio: "Simplifying chemical reactions and formulas with real-world examples.",
-    img: "https://i.pravatar.cc/150?img=14",
-    verified: true,
-  },
-  {
-    id: 5,
-    name: "Sneha Patel",
-    subject: "Biology",
-    experienceYears: 3,
-    rating: 4.8,
-    reviews: 64,
-    price: 400,
-    location: "Ahmedabad, Gujarat",
-    mode: ["Online"],
-    bio: "NEET and board exam specialist for classes 9 through 12.",
-    img: "https://i.pravatar.cc/150?img=32",
-    verified: false,
-  },
-  {
-    id: 6,
-    name: "Arjun Kapoor",
-    subject: "Computer Science",
-    experienceYears: 8,
-    rating: 4.9,
-    reviews: 142,
-    price: 700,
-    location: "Hyderabad, Telangana",
-    mode: ["Online", "Offline"],
-    bio: "Industry engineer teaching programming fundamentals and data structures.",
-    img: "https://i.pravatar.cc/150?img=51",
-    verified: true,
-  },
-  {
-    id: 7,
-    name: "Neha Joshi",
-    subject: "Mathematics",
-    experienceYears: 2,
-    rating: 4.3,
-    reviews: 34,
-    price: 280,
-    location: "Jaipur, Rajasthan",
-    mode: ["Online"],
-    bio: "Patient, encouraging teaching style designed for young learners.",
-    img: "https://i.pravatar.cc/150?img=29",
-    verified: false,
-  },
-  {
-    id: 8,
-    name: "Karan Malhotra",
-    subject: "Physics",
-    experienceYears: 12,
-    rating: 4.9,
-    reviews: 201,
-    price: 800,
-    location: "Chennai, Tamil Nadu",
-    mode: ["Offline"],
-    bio: "JEE and board exam expert with a decade of proven results.",
-    img: "https://i.pravatar.cc/150?img=60",
-    verified: true,
-  },
-];
 
 const experienceOptions = [
   { value: "1-3", label: "1 - 3 Years" },
@@ -211,6 +100,45 @@ function toggleInArray(arr, value) {
   return arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
 }
 
+// --- Real data mapping -----------------------------------------------
+
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+// Converts a raw teacher record (the shape stored in localStorage under
+// "localteacher") into the flat shape this page's UI expects.
+function normalizeTeacher(raw) {
+  const user = raw.userid || {};
+  const subjects =
+    Array.isArray(raw.subjects) && raw.subjects.length
+      ? raw.subjects
+      : ["General"];
+  const mode = Array.isArray(raw.mode) ? raw.mode.map(capitalize) : [];
+  const experienceYears =
+    Array.isArray(raw.experienceDetails) && raw.experienceDetails.length
+      ? Math.max(...raw.experienceDetails.map((e) => e.years || 0))
+      : 0;
+
+  return {
+    id: raw._id,
+    name: user.name || "Unnamed Teacher",
+    subjects,
+    experienceYears,
+    rating: typeof raw.rating === "number" ? raw.rating : 0,
+    reviews: raw.totalReviews ?? 0,
+    price: raw.hourelyfee ?? 0,
+    location: raw.location || "Location not specified",
+    mode,
+    bio: raw.bio || "",
+    img: user.avatar || "https://i.pravatar.cc/150",
+    verified: Boolean(raw.isVerifiedTeacher),
+  };
+}
+
+// -----------------------------------------------------------------------
+
 function FilterGroup({ title, options, selected, onToggle, counts, isFirst }) {
   return (
     <div className={`border-b border-slate-100 py-5 ${isFirst ? "pt-0" : ""}`}>
@@ -246,16 +174,12 @@ function FilterGroup({ title, options, selected, onToggle, counts, isFirst }) {
 }
 
 function TeacherCard({ teacher }) {
-  const style = subjectStyles[teacher.subject] || {
-    bg: "bg-slate-100",
-    text: "text-slate-600",
-  };
   return (
     <div className="flex flex-col rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start gap-4">
         <img
-          src={teacher.img}
-          alt={teacher.name}
+          src={teacher.userid?.avatar}
+          alt={teacher.userid?.name}
           className="h-16 w-16 flex-shrink-0 rounded-full object-cover ring-2 ring-slate-100"
         />
         <div className="min-w-0 flex-1">
@@ -285,11 +209,20 @@ function TeacherCard({ teacher }) {
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-medium ${style.bg} ${style.text}`}
-        >
-          {teacher.subject}
-        </span>
+        {teacher.subjects.map((subj) => {
+          const style = subjectStyles[subj] || {
+            bg: "bg-slate-100",
+            text: "text-slate-600",
+          };
+          return (
+            <span
+              key={subj}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${style.bg} ${style.text}`}
+            >
+              {subj}
+            </span>
+          );
+        })}
         {teacher.mode.map((m) => (
           <span
             key={m}
@@ -308,7 +241,7 @@ function TeacherCard({ teacher }) {
       <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
         <div>
           <span className="text-lg font-bold text-slate-900">
-            ₹{teacher.price}
+            ₹{teacher.hourelyfee}
           </span>
           <span className="text-sm text-slate-400">/hr</span>
         </div>
@@ -339,17 +272,31 @@ export default function FindTeachersPage() {
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [sortBy, setSortBy] = useState("relevance");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
   const user = useSelector((state) => state.auth.user);
+
+  // Load real teacher data from localStorage on mount
+  const teachers = useSelector((state) => state.teachers.teachers);
+  console.log(teachers);
+
+  // Build the subject list from whatever subjects actually exist in the
+  // stored data, falling back to a sensible default if storage is empty.
+  const subjectList = useMemo(() => {
+    if (!teachers.length) return DEFAULT_SUBJECTS;
+    const unique = new Set();
+    teachers.forEach((t) => t.subjects.forEach((s) => unique.add(s)));
+    return Array.from(unique).sort();
+  }, [teachers]);
 
   const subjectCounts = useMemo(
     () =>
       Object.fromEntries(
         subjectList.map((s) => [
           s,
-          teachers.filter((t) => t.subject === s).length,
+          teachers.filter((t) => t.subjects.includes(s)).length,
         ]),
       ),
-    [],
+    [subjectList, teachers],
   );
   const modeCounts = useMemo(
     () =>
@@ -359,7 +306,7 @@ export default function FindTeachersPage() {
           teachers.filter((t) => t.mode.includes(o.value)).length,
         ]),
       ),
-    [],
+    [teachers],
   );
 
   const hasActiveFilters =
@@ -390,7 +337,10 @@ export default function FindTeachersPage() {
         !t.location.toLowerCase().includes(locationQuery.toLowerCase())
       )
         return false;
-      if (selectedSubjects.length && !selectedSubjects.includes(t.subject))
+      if (
+        selectedSubjects.length &&
+        !t.subjects.some((s) => selectedSubjects.includes(s))
+      )
         return false;
       if (
         selectedModes.length &&
@@ -438,6 +388,7 @@ export default function FindTeachersPage() {
     }
     return list;
   }, [
+    teachers,
     nameQuery,
     locationQuery,
     selectedSubjects,
@@ -552,13 +503,13 @@ export default function FindTeachersPage() {
           ) : (
             <>
               <div className="flex items-center gap-3 cursor-pointer">
-                <a
+                <button
                   onClick={() => navigate("/login")}
                   className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:text-violet-600"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Login
-                </a>
+                </button>
 
                 <button
                   onClick={() => navigate("/signup")}
@@ -824,7 +775,18 @@ export default function FindTeachersPage() {
             </div>
           )}
 
-          {filteredTeachers.length === 0 ? (
+          {teachers.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+              <Search className="h-10 w-10 text-slate-300" />
+              <h3 className="mt-4 font-semibold text-slate-900">
+                No teacher data found
+              </h3>
+              <p className="mt-1 text-sm text-slate-500">
+                No teachers were found in local storage under the key
+                "localteacher".
+              </p>
+            </div>
+          ) : filteredTeachers.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
               <Search className="h-10 w-10 text-slate-300" />
               <h3 className="mt-4 font-semibold text-slate-900">

@@ -72,11 +72,21 @@ const teacherSchema = new mongoose.Schema({
       years: Number,
     },
   ],
-  documents:{
-    type:[String],
-    required:true
-  }
-  
+  documents: {
+    type: [String],
+    required: true,
+  },
+  rating: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5,
+  },
+
+  totalReviews: {
+    type: Number,
+    default: 0,
+  },
 });
 
 teacherSchema.index({ coordinates: '2dsphere' });

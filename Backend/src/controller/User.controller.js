@@ -280,7 +280,15 @@ const RegisterParent = AsyncHandler(async (req, res) => {
 
 const getNearbyTeachers = async (req, res) => {
   try {
-    const { latitude, longitude } = req.body;
+     
+    const { latitude, longitude } = req.body || {};
+    console.log(latitude,longitude)
+    if (latitude == null || longitude == null) {
+      const teachers = await Teacher.find().populate("userid");;
+      return res
+        .status(200)
+        .json(new Apireponse(200, 'All Teachers', teachers));
+    }
 
     const teachers = await Teacher.aggregate([
       {
@@ -290,24 +298,24 @@ const getNearbyTeachers = async (req, res) => {
             coordinates: [Number(longitude), Number(latitude)],
           },
           distanceField: 'distance',
-          maxDistance: 10000, // 5 km
+          maxDistance: 10000, // 10 km
           spherical: true,
           key: 'coordinates',
         },
       },
     ]);
 
-    res
+    return res
       .status(200)
-      .json(new Apireponse(200, 'The Nearest 5 km Teachers are', teachers));
+      .json(new Apireponse(200, 'The nearest 10 km teachers are', teachers));
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
 };
 
-const GetRoledUser = AsyncHandler(async (req,res) => {
+const GetRoledUser = AsyncHandler(async (req, res) => {
   const role = req.user.role;
   let RoledUser;
   if (role === 'teacher') {

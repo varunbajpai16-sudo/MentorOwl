@@ -2,8 +2,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import HomePageLoader from "../components/Loader";
+import api from "../services/axios";
+import { setTeachers,
+  addTeacher,
+  clearTeachers,
+  setTeacherLoading,
+  setTeacherError,} from "../features/LocalTeacher/LocalTeachers"
 import {
   GraduationCap,
   BookOpen,
@@ -474,23 +480,44 @@ function HeroIllustration() {
 export default function TutorMateHomepage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const startserver = async () => {
-    try {
-      const res = await fetch("https://tutormate-pzpe.onrender.com/api/v1/");
-      console.log("Server Started");
-    } catch (error) {
-      console.log("Server Not Working", error);
-    }
-  };
-
-  useEffect(() => {
-    startserver();
-  }, []);
-
+  const dispatch = useDispatch();
   const [showSuccessPopup, setShowSuccessPopup] = useState(
     location.state?.accountCreated || false,
   );
+
   const user = useSelector((state) => state.auth.user);
+  useEffect(() => {
+    const getTeachers = async () => {
+      try {
+        let latitude = null;
+        let longitude = null;
+        if (user?.role === "student") {
+          const student = JSON.parse(localStorage.getItem("student"));
+          longitude = student.coordinates.coordinates[0];
+          latitude = student.coordinates.coordinates[1];
+        }
+        if (user?.role === "parent") {
+          const parent = JSON.parse(localStorage.getItem("parent"));
+          longitude = parent.coordinates.coordinates[0];
+          latitude = parent.coordinates.coordinates[1];
+        }
+
+        const response = await api.post("/user/getteacher", {
+          latitude,
+          longitude,
+        });
+        localStorage.setItem(
+          "localTeachers",
+          JSON.stringify(response.data.data),
+        );
+        dispatch(setTeachers(response.data.data))
+      } catch (error) {
+        console.log(error.response?.data?.message || error.message);
+      }
+    };
+
+    getTeachers();
+  }, []);
 
   useEffect(() => {
     if (location.state?.accountCreated) {
