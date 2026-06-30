@@ -18,6 +18,8 @@ import {
   BookOpen,
   TrendingUp,
   Brain,
+  Menu,
+  X,
 } from "lucide-react";
 
 const PURPLE = "#6C5DD3";
@@ -93,6 +95,7 @@ export default function LoginPage() {
   const user = useSelector((state) => state.auth.user);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("Already Logged In");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const HandelLogout = () => {
     if (user?.role === "teacher") {
       localStorage.clear("teacher");
@@ -197,11 +200,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans antialiased">
+    <div className="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
       {showPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <h2 className="text-xl font-bold text-slate-900 flex justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl sm:p-6">
+            <h2 className="flex justify-center text-center text-lg font-bold text-slate-900 sm:text-xl">
               {errorMessage}
             </h2>
             <button
@@ -214,28 +217,28 @@ export default function LoginPage() {
         </div>
       )}
       {/* ── Header ── */}
-      <header className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-10">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div
               onClick={() => navigate("/")}
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg"
+              className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg sm:h-11 sm:w-11"
             >
-              <BookOpen className="h-6 w-6 text-amber-300" />
+              <BookOpen className="h-5 w-5 text-amber-300 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <div className="text-xl font-extrabold leading-tight text-slate-900">
+              <div className="text-base font-extrabold leading-tight text-slate-900 sm:text-xl">
                 TutorMate
               </div>
-              <div className="text-xs leading-tight text-slate-400">
+              <div className="hidden text-xs leading-tight text-slate-400 sm:block">
                 Find the right teacher for you
               </div>
             </div>
           </div>
 
           {/* Nav */}
-          <nav className="hidden items-center gap-9 text-sm font-medium lg:flex">
+          <nav className="hidden items-center gap-6 text-sm font-medium lg:flex xl:gap-9">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.link;
               return (
@@ -255,7 +258,7 @@ export default function LoginPage() {
           </nav>
 
           {/* CTA */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 sm:gap-5">
             <button
               onClick={() => navigate("/login")}
               className="hidden items-center gap-1.5 text-sm font-semibold sm:flex text-violet-700"
@@ -264,7 +267,7 @@ export default function LoginPage() {
               Login
             </button>
             <button
-              className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors"
+              className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-colors sm:px-5 sm:py-2.5 sm:text-sm"
               style={{ backgroundColor: PURPLE }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.backgroundColor = PURPLE_DARK)
@@ -276,22 +279,60 @@ export default function LoginPage() {
             >
               Sign Up
             </button>
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile nav panel */}
+        {mobileMenuOpen && (
+          <nav className="flex flex-col gap-1 border-t border-slate-100 bg-white px-4 py-3 lg:hidden">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.link;
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate(link.link);
+                  }}
+                  className={`rounded-lg px-3 py-2.5 text-left text-sm font-medium ${
+                    isActive
+                      ? "bg-violet-50 font-semibold text-violet-600"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+          </nav>
+        )}
       </header>
 
       {/* ── Main ── */}
       <section
         style={{ backgroundColor: "#F4F2FC" }}
-        className="min-h-[calc(100vh-80px)] flex items-center"
+        className="flex items-center"
       >
-        <div className="mx-auto w-full max-w-7xl px-6 py-14 lg:px-10">
+        <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             {/* ── Left: Brand panel ── */}
             <div>
               {/* Badge */}
               <div
-                className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
+                className="mb-5 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium sm:mb-6 sm:px-4 sm:py-2 sm:text-sm"
                 style={{
                   backgroundColor: "rgba(108,93,211,0.1)",
                   color: PURPLE,
@@ -301,26 +342,26 @@ export default function LoginPage() {
                 Trusted by 50,000+ Students
               </div>
 
-              <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 lg:text-5xl">
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
                 Welcome Back to
                 <br />
                 <span style={{ color: PURPLE }}>TutorMate</span>
               </h1>
-              <p className="mt-4 max-w-md text-lg leading-relaxed text-slate-500">
+              <p className="mt-4 max-w-md text-base leading-relaxed text-slate-500 sm:text-lg">
                 Sign in to connect with your teachers, track your progress, and
                 continue your learning journey.
               </p>
 
               {/* Benefits list */}
-              <div className="mt-8 space-y-4">
+              <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-4">
                 {benefits.map((b) => {
                   const Icon = b.icon;
                   return (
                     <div key={b.text} className="flex items-center gap-3">
                       <div
-                        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${b.bg}`}
+                        className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10 ${b.bg}`}
                       >
-                        <Icon className={`h-5 w-5 ${b.color}`} />
+                        <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${b.color}`} />
                       </div>
                       <span className="text-sm font-medium text-slate-700">
                         {b.text}
@@ -331,12 +372,12 @@ export default function LoginPage() {
               </div>
 
               {/* Testimonial card */}
-              <div className="mt-10 max-w-sm rounded-2xl bg-white p-5 shadow-xl shadow-indigo-100/70">
+              <div className="mt-8 max-w-sm rounded-2xl bg-white p-4 shadow-xl shadow-indigo-100/70 sm:mt-10 sm:p-5">
                 <div className="flex items-center gap-3">
                   <img
                     src="https://i.pravatar.cc/150?img=44"
                     alt="Student testimonial"
-                    className="h-12 w-12 flex-shrink-0 rounded-full object-cover ring-2 ring-rose-200"
+                    className="h-11 w-11 flex-shrink-0 rounded-full object-cover ring-2 ring-rose-200 sm:h-12 sm:w-12"
                   />
                   <div>
                     <div className="font-semibold text-slate-900">
@@ -363,10 +404,10 @@ export default function LoginPage() {
             </div>
 
             {/* ── Right: Login form ── */}
-            <div className="rounded-2xl bg-white p-8 shadow-xl shadow-indigo-100/70 lg:p-10">
+            <div className="rounded-2xl bg-white p-5 shadow-xl shadow-indigo-100/70 sm:p-8 lg:p-10">
               {/* Form heading */}
-              <div className="mb-7">
-                <h2 className="text-2xl font-extrabold text-slate-900">
+              <div className="mb-6 sm:mb-7">
+                <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">
                   Sign In
                 </h2>
                 <p className="mt-1.5 text-sm text-slate-500">
@@ -391,16 +432,16 @@ export default function LoginPage() {
               </button>
 
               {/* Divider */}
-              <div className="my-6 flex items-center gap-3">
+              <div className="my-5 flex items-center gap-3 sm:my-6">
                 <div className="flex-1 border-t border-slate-100" />
-                <span className="text-xs font-medium tracking-wide text-slate-400">
+                <span className="text-center text-xs font-medium tracking-wide text-slate-400">
                   OR CONTINUE WITH EMAIL
                 </span>
                 <div className="flex-1 border-t border-slate-100" />
               </div>
 
               {/* Fields */}
-              <div className="space-y-5">
+              <div className="space-y-4 sm:space-y-5">
                 {/* Email */}
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-slate-700">
@@ -413,14 +454,14 @@ export default function LoginPage() {
                       placeholder="you@example.com"
                       value={user?.email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 outline-none"
                     />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div>
-                  <div className="mb-1.5 flex items-center justify-between">
+                  <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1">
                     <label className="text-sm font-medium text-slate-700">
                       Password
                     </label>
@@ -439,11 +480,11 @@ export default function LoginPage() {
                       placeholder="Enter your password"
                       value={user?.googleId}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 outline-none"
                     />
                     <button
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-slate-400 transition-colors hover:text-slate-600"
+                      className="flex-shrink-0 text-slate-400 transition-colors hover:text-slate-600"
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
@@ -464,7 +505,7 @@ export default function LoginPage() {
                     id="remember"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 accent-violet-600"
+                    className="h-4 w-4 flex-shrink-0 rounded border-slate-300 accent-violet-600"
                   />
                   <label
                     htmlFor="remember"
@@ -494,17 +535,17 @@ export default function LoginPage() {
               </div>
 
               {/* Trust row */}
-              <div className="mt-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-400">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-400 sm:mt-7">
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   SSL Secured
                 </span>
-                <div className="h-3 w-px bg-slate-200" />
+                <div className="hidden h-3 w-px bg-slate-200 xs:block" />
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   Privacy Protected
                 </span>
-                <div className="h-3 w-px bg-slate-200" />
+                <div className="hidden h-3 w-px bg-slate-200 xs:block" />
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   2FA Available
@@ -517,14 +558,14 @@ export default function LoginPage() {
       {/* AI Tutor Assistant Button */}
       <button
         onClick={() => navigate("/chatbot")}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 z-50 group sm:bottom-6 sm:right-6"
       >
         <div className="relative">
           {/* Blinking Ring */}
           <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-30"></span>
 
-          {/* Hover Text */}
-          <div className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0">
+          {/* Hover Text - desktop only */}
+          <div className="absolute right-[4.5rem] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 sm:block">
             <p className="text-sm font-semibold text-slate-800">
               Talk to AI Teacher
             </p>
@@ -532,8 +573,8 @@ export default function LoginPage() {
           </div>
 
           {/* Button */}
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110">
-            <Brain className="h-8 w-8 text-amber-300" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110 sm:h-16 sm:w-16">
+            <Brain className="h-7 w-7 text-amber-300 sm:h-8 sm:w-8" />
           </div>
         </div>
       </button>

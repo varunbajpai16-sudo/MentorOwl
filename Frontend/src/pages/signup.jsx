@@ -18,7 +18,9 @@ import {
   TrendingUp,
   Phone,
   User,
-  Brain
+  Brain,
+  Menu,
+  X,
 } from "lucide-react";
 
 const PURPLE = "#6C5DD3";
@@ -87,6 +89,7 @@ export default function SignupPage() {
   const location = useLocation();
   const dispatch = useDispatch()
   const user = useSelector((state)=>state.auth.user)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const googleLogin = useGoogleLogin({
       onSuccess: async (tokenResponse) => {
         navigate("/rolechoose",{
@@ -114,25 +117,28 @@ export default function SignupPage() {
   const [agree, setAgree] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white font-sans antialiased">
+    <div className="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
       {/* Header */}
-      <header className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <div className="flex items-center gap-3">
-            <div onClick={()=>navigate("/")}  className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg">
-              <BookOpen className="h-6 w-6 text-amber-300" />
+      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-10">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div
+              onClick={() => navigate("/")}
+              className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg sm:h-11 sm:w-11"
+            >
+              <BookOpen className="h-5 w-5 text-amber-300 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <div className="text-xl font-extrabold leading-tight text-slate-900">
+              <div className="text-base font-extrabold leading-tight text-slate-900 sm:text-xl">
                 TutorMate
               </div>
-              <div className="text-xs leading-tight text-slate-400">
+              <div className="hidden text-xs leading-tight text-slate-400 sm:block">
                 Find the right teacher for you
               </div>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-9 text-sm font-medium lg:flex">
+          <nav className="hidden items-center gap-6 text-sm font-medium lg:flex xl:gap-9">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.link;
 
@@ -152,7 +158,7 @@ export default function SignupPage() {
             })}
           </nav>
 
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 sm:gap-5">
             <button
               onClick={() => navigate("/login")}
               className="hidden items-center gap-1.5 text-sm font-semibold sm:flex"
@@ -163,26 +169,74 @@ export default function SignupPage() {
             </button>
 
             <button
-              className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-sm"
+              className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white shadow-sm sm:px-5 sm:py-2.5 sm:text-sm"
               style={{ backgroundColor: PURPLE }}
             >
               Sign Up
             </button>
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile nav panel */}
+        {mobileMenuOpen && (
+          <nav className="flex flex-col gap-1 border-t border-slate-100 bg-white px-4 py-3 lg:hidden">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.link;
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate(link.link);
+                  }}
+                  className={`rounded-lg px-3 py-2.5 text-left text-sm font-medium ${
+                    isActive
+                      ? "bg-violet-50 font-semibold text-violet-600"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                navigate("/login");
+              }}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Login
+            </button>
+          </nav>
+        )}
       </header>
 
       {/* Main */}
       <section
         style={{ backgroundColor: "#F4F2FC" }}
-        className="min-h-[calc(100vh-80px)] flex items-center"
+        className="flex items-center"
       >
-        <div className="mx-auto w-full max-w-7xl px-6 py-14 lg:px-10">
+        <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             {/* Left Side */}
             <div>
               <div
-                className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
+                className="mb-5 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium sm:mb-6 sm:px-4 sm:py-2 sm:text-sm"
                 style={{
                   backgroundColor: "rgba(108,93,211,0.1)",
                   color: PURPLE,
@@ -192,7 +246,7 @@ export default function SignupPage() {
                 Join 50,000+ Successful Students
               </div>
 
-              <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 lg:text-5xl">
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
                 Join
                 <br />
                 <span style={{ color: PURPLE }}>TutorMate</span>
@@ -200,21 +254,21 @@ export default function SignupPage() {
                 Today
               </h1>
 
-              <p className="mt-4 max-w-md text-lg leading-relaxed text-slate-500">
+              <p className="mt-4 max-w-md text-base leading-relaxed text-slate-500 sm:text-lg">
                 Create your free account and connect with expert tutors,
                 personalized learning plans, and better academic outcomes.
               </p>
 
-              <div className="mt-8 space-y-4">
+              <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-4">
                 {benefits.map((benefit) => {
                   const Icon = benefit.icon;
 
                   return (
                     <div key={benefit.text} className="flex items-center gap-3">
                       <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-full ${benefit.bg}`}
+                        className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full sm:h-10 sm:w-10 ${benefit.bg}`}
                       >
-                        <Icon className={`h-5 w-5 ${benefit.color}`} />
+                        <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${benefit.color}`} />
                       </div>
 
                       <span className="text-sm font-medium text-slate-700">
@@ -225,12 +279,12 @@ export default function SignupPage() {
                 })}
               </div>
 
-              <div className="mt-10 max-w-sm rounded-2xl bg-white p-5 shadow-xl shadow-indigo-100/70">
+              <div className="mt-8 max-w-sm rounded-2xl bg-white p-4 shadow-xl shadow-indigo-100/70 sm:mt-10 sm:p-5">
                 <div className="flex items-center gap-3">
                   <img
                     src="https://i.pravatar.cc/150?img=32"
                     alt=""
-                    className="h-12 w-12 rounded-full object-cover ring-2 ring-indigo-200"
+                    className="h-11 w-11 flex-shrink-0 rounded-full object-cover ring-2 ring-indigo-200 sm:h-12 sm:w-12"
                   />
 
                   <div>
@@ -261,9 +315,9 @@ export default function SignupPage() {
             </div>
 
             {/* Right Side */}
-            <div className="rounded-2xl bg-white p-8 shadow-xl shadow-indigo-100/70 lg:p-10">
-              <div className="mb-7">
-                <h2 className="text-2xl font-extrabold text-slate-900">
+            <div className="rounded-2xl bg-white p-5 shadow-xl shadow-indigo-100/70 sm:p-8 lg:p-10">
+              <div className="mb-6 sm:mb-7">
+                <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">
                   Create Account
                 </h2>
 
@@ -287,15 +341,15 @@ export default function SignupPage() {
                 Continue with Google
               </button>
 
-              <div className="my-6 flex items-center gap-3">
+              <div className="my-5 flex items-center gap-3 sm:my-6">
                 <div className="flex-1 border-t border-slate-100" />
-                <span className="text-xs font-medium tracking-wide text-slate-400">
+                <span className="text-xs font-medium tracking-wide text-slate-400 text-center">
                   OR SIGN UP WITH EMAIL
                 </span>
                 <div className="flex-1 border-t border-slate-100" />
               </div>
 
-              <div className="space-y-5">
+              <div className="space-y-4 sm:space-y-5">
                 {/* Full Name */}
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-slate-700">
@@ -303,12 +357,12 @@ export default function SignupPage() {
                   </label>
 
                   <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-3">
-                    <User className="h-4 w-4 text-slate-400" />
+                    <User className="h-4 w-4 flex-shrink-0 text-slate-400" />
 
                     <input
                       type="text"
                       placeholder="Enter your full name"
-                      className="flex-1 bg-transparent text-sm outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm outline-none"
                     />
                   </div>
                 </div>
@@ -320,12 +374,12 @@ export default function SignupPage() {
                   </label>
 
                   <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-3">
-                    <Mail className="h-4 w-4 text-slate-400" />
+                    <Mail className="h-4 w-4 flex-shrink-0 text-slate-400" />
 
                     <input
                       type="email"
                       placeholder="you@example.com"
-                      className="flex-1 bg-transparent text-sm outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm outline-none"
                     />
                   </div>
                 </div>
@@ -337,12 +391,12 @@ export default function SignupPage() {
                   </label>
 
                   <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-3">
-                    <Phone className="h-4 w-4 text-slate-400" />
+                    <Phone className="h-4 w-4 flex-shrink-0 text-slate-400" />
 
                     <input
                       type="tel"
                       placeholder="+91 98765 43210"
-                      className="flex-1 bg-transparent text-sm outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm outline-none"
                     />
                   </div>
                 </div>
@@ -354,17 +408,18 @@ export default function SignupPage() {
                   </label>
 
                   <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-3">
-                    <Lock className="h-4 w-4 text-slate-400" />
+                    <Lock className="h-4 w-4 flex-shrink-0 text-slate-400" />
 
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Create password"
-                      className="flex-1 bg-transparent text-sm outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm outline-none"
                     />
 
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      className="flex-shrink-0"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4 text-slate-400" />
@@ -382,12 +437,12 @@ export default function SignupPage() {
                   </label>
 
                   <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-3">
-                    <Lock className="h-4 w-4 text-slate-400" />
+                    <Lock className="h-4 w-4 flex-shrink-0 text-slate-400" />
 
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm password"
-                      className="flex-1 bg-transparent text-sm outline-none"
+                      className="w-full min-w-0 flex-1 bg-transparent text-sm outline-none"
                     />
 
                     <button
@@ -395,6 +450,7 @@ export default function SignupPage() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
+                      className="flex-shrink-0"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4 text-slate-400" />
@@ -411,7 +467,7 @@ export default function SignupPage() {
                     type="checkbox"
                     checked={agree}
                     onChange={(e) => setAgree(e.target.checked)}
-                    className="mt-1 h-4 w-4 accent-violet-600"
+                    className="mt-1 h-4 w-4 flex-shrink-0 accent-violet-600"
                   />
 
                   <label className="text-sm leading-relaxed text-slate-600">
@@ -447,14 +503,14 @@ export default function SignupPage() {
                 </button>
               </div>
 
-              <div className="mt-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-400">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-400 sm:mt-7">
                 <span>100% Free Registration</span>
 
-                <div className="h-3 w-px bg-slate-200" />
+                <div className="hidden h-3 w-px bg-slate-200 xs:block" />
 
                 <span>Verified Tutors</span>
 
-                <div className="h-3 w-px bg-slate-200" />
+                <div className="hidden h-3 w-px bg-slate-200 xs:block" />
 
                 <span>Secure & Protected</span>
               </div>
@@ -465,14 +521,14 @@ export default function SignupPage() {
         {/* AI Tutor Assistant Button */}
       <button
         onClick={() => navigate("/chatbot")}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 z-50 group sm:bottom-6 sm:right-6"
       >
         <div className="relative">
           {/* Blinking Ring */}
           <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-30"></span>
 
-          {/* Hover Text */}
-          <div className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0">
+          {/* Hover Text - desktop only */}
+          <div className="absolute right-[4.5rem] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 sm:block">
             <p className="text-sm font-semibold text-slate-800">
               Talk to AI Teacher
             </p>
@@ -480,8 +536,8 @@ export default function SignupPage() {
           </div>
 
           {/* Button */}
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110">
-            <Brain className="h-8 w-8 text-amber-300" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110 sm:h-16 sm:w-16">
+            <Brain className="h-7 w-7 text-amber-300 sm:h-8 sm:w-8" />
           </div>
         </div>
       </button>
