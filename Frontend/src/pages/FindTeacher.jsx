@@ -12,6 +12,7 @@ import {
   SlidersHorizontal,
   X,
   Brain,
+  Menu,
 } from "lucide-react";
 
 const PURPLE = "#6C5DD3";
@@ -176,16 +177,16 @@ function FilterGroup({ title, options, selected, onToggle, counts, isFirst }) {
 function TeacherCard({ teacher }) {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex items-start gap-4">
+    <div className="flex flex-col rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
+      <div className="flex items-start gap-3 sm:gap-4">
         {teacher.userid?.avatar ? (
           <img
             src={teacher.img}
             alt={teacher.name}
-            className="h-16 w-16 flex-shrink-0 rounded-full object-cover ring-2 ring-slate-100"
+            className="h-14 w-14 flex-shrink-0 rounded-full object-cover ring-2 ring-slate-100 sm:h-16 sm:w-16"
           />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md">
             {teacher.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
         )}
@@ -248,7 +249,7 @@ function TeacherCard({ teacher }) {
         <span className="truncate">{teacher.location}</span>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+      <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 xs:flex-row xs:items-center xs:justify-between">
         <div>
           <span className="text-lg font-bold text-slate-900">
             ₹{teacher.price}
@@ -256,7 +257,7 @@ function TeacherCard({ teacher }) {
           <span className="text-sm text-slate-400">/hr</span>
         </div>
         <button
-          className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors hover:cursor-pointer"
+          className="w-full rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors hover:cursor-pointer xs:w-auto"
           onClick={() => navigate("/teacherprofile", { state: teacher })}
           style={{ backgroundColor: PURPLE }}
           onMouseEnter={(e) =>
@@ -283,6 +284,7 @@ export default function FindTeachersPage() {
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [sortBy, setSortBy] = useState("relevance");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
 
@@ -342,6 +344,11 @@ export default function FindTeachersPage() {
     setSelectedPrices([]);
     setSelectedRatings([]);
   };
+
+  // Close mobile nav menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const filteredTeachers = useMemo(() => {
     let list = teachers.filter((t) => {
@@ -465,28 +472,28 @@ export default function FindTeachersPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans antialiased">
+    <div className="min-h-screen bg-slate-50 font-sans antialiased overflow-x-hidden">
       {/* Header */}
-      <header className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-10">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div
               onClick={() => navigate("/")}
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg"
+              className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg sm:h-11 sm:w-11"
             >
-              <BookOpen className="h-6 w-6 text-amber-300" />
+              <BookOpen className="h-5 w-5 text-amber-300 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <div className="text-xl font-extrabold leading-tight text-slate-900">
+              <div className="text-base font-extrabold leading-tight text-slate-900 sm:text-xl">
                 TutorMate
               </div>
-              <div className="text-xs leading-tight text-slate-400">
+              <div className="hidden text-xs leading-tight text-slate-400 sm:block">
                 Find the right teacher for you
               </div>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-9 text-sm font-medium lg:flex">
+          <nav className="hidden items-center gap-6 text-sm font-medium lg:flex xl:gap-9">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.link;
 
@@ -506,18 +513,18 @@ export default function FindTeachersPage() {
             })}
           </nav>
 
-          {user ? (
-            <div
-              onClick={() => navigate("/profile")}
-              className="flex items-center gap-3 cursor-pointer"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md">
-                {user.name?.charAt(0)?.toUpperCase() || "U"}
+          <div className="flex items-center gap-3 sm:gap-5">
+            {user ? (
+              <div
+                onClick={() => navigate("/profile")}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md sm:h-10 sm:w-10">
+                  {user.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center gap-3 cursor-pointer">
+            ) : (
+              <>
                 <button
                   onClick={() => navigate("/login")}
                   className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:text-violet-600"
@@ -528,15 +535,59 @@ export default function FindTeachersPage() {
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white"
+                  className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white sm:px-5 sm:py-2.5 sm:text-sm"
                   style={{ backgroundColor: PURPLE }}
                 >
                   Sign Up
                 </button>
-              </div>
-            </>
-          )}
+              </>
+            )}
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile nav panel */}
+        {mobileMenuOpen && (
+          <nav className="flex flex-col gap-1 border-t border-slate-100 bg-white px-4 py-3 lg:hidden">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.link;
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => navigate(link.link)}
+                  className={`rounded-lg px-3 py-2.5 text-left text-sm font-medium ${
+                    isActive
+                      ? "bg-violet-50 font-semibold text-violet-600"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+            {!user && (
+              <button
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Login
+              </button>
+            )}
+          </nav>
+        )}
       </header>
 
       {/* Page intro + search */}
@@ -544,20 +595,20 @@ export default function FindTeachersPage() {
         style={{ backgroundColor: "#F4F2FC" }}
         className="border-b border-indigo-50"
       >
-        <div className="mx-auto max-w-4xl px-6 py-12 text-center lg:px-10">
-          <p className="text-sm text-slate-400">
+        <div className="mx-auto max-w-4xl px-4 py-8 text-center sm:px-6 sm:py-12 lg:px-10">
+          <p className="text-xs text-slate-400 sm:text-sm">
             Home <span className="mx-1">/</span>{" "}
             <span className="font-medium text-slate-600">Find Teachers</span>
           </p>
-          <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 lg:text-4xl">
+          <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
             Find Your Perfect Tuition Teacher
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-slate-500">
+          <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500 sm:text-base">
             Browse verified, experienced teachers and filter by subject,
             location, price and more.
           </p>
 
-          <div className="mt-7 rounded-2xl bg-white p-4 text-left shadow-xl shadow-indigo-100/70 sm:p-5">
+          <div className="mt-6 rounded-2xl bg-white p-4 text-left shadow-xl shadow-indigo-100/70 sm:mt-7 sm:p-5">
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative">
                 <select
@@ -618,10 +669,7 @@ export default function FindTeachersPage() {
     "
                 />
               </div>
-              <button
-                className="flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-6 py-3 hover:cursor-pointer text-sm font-semibold text-white"
-                style={{ backgroundColor: PURPLE }}
-              >
+              <button className="flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-6 py-3 hover:cursor-pointer text-sm font-semibold text-white" style={{ backgroundColor: PURPLE }}>
                 <Search className="h-4 w-4" />
                 Search Teachers
               </button>
@@ -631,7 +679,7 @@ export default function FindTeachersPage() {
       </section>
 
       {/* Main content */}
-      <section className="mx-auto max-w-7xl gap-8 px-6 py-10 lg:flex lg:px-10">
+      <section className="mx-auto max-w-7xl gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:flex lg:px-10">
         {/* Sidebar */}
         <aside className="flex-shrink-0 lg:w-72">
           <button
@@ -641,6 +689,14 @@ export default function FindTeachersPage() {
             <span className="flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4" />
               Filters
+              {hasActiveFilters && (
+                <span
+                  className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold text-white"
+                  style={{ backgroundColor: PURPLE }}
+                >
+                  {activeChips.length}
+                </span>
+              )}
             </span>
             <ChevronDown
               className={`h-4 w-4 transition-transform ${showMobileFilters ? "rotate-180" : ""}`}
@@ -648,7 +704,7 @@ export default function FindTeachersPage() {
           </button>
 
           <div
-            className={`${showMobileFilters ? "block" : "hidden"} rounded-2xl border border-slate-100 bg-white p-5 lg:sticky lg:top-6 lg:block`}
+            className={`${showMobileFilters ? "block" : "hidden"} rounded-2xl border border-slate-100 bg-white p-4 sm:p-5 lg:sticky lg:top-6 lg:block`}
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-bold text-slate-900">Filters</h2>
@@ -741,7 +797,7 @@ export default function FindTeachersPage() {
 
         {/* Results */}
         <div className="mt-6 flex-1 lg:mt-0">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <p className="text-sm text-slate-500">
               <span className="font-semibold text-slate-900">
                 {filteredTeachers.length}
@@ -753,7 +809,7 @@ export default function FindTeachersPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-200 sm:flex-initial"
               >
                 <option value="relevance">Relevance</option>
                 <option value="rating">Highest Rated</option>
@@ -791,7 +847,7 @@ export default function FindTeachersPage() {
           )}
 
           {teachers.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-16 text-center">
               <Search className="h-10 w-10 text-slate-300" />
               <h3 className="mt-4 font-semibold text-slate-900">
                 No teacher data found
@@ -802,7 +858,7 @@ export default function FindTeachersPage() {
               </p>
             </div>
           ) : filteredTeachers.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-16 text-center">
               <Search className="h-10 w-10 text-slate-300" />
               <h3 className="mt-4 font-semibold text-slate-900">
                 No teachers match your filters
@@ -819,7 +875,7 @@ export default function FindTeachersPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {filteredTeachers.map((teacher) => (
                 <TeacherCard key={teacher.id} teacher={teacher} />
               ))}
@@ -830,14 +886,14 @@ export default function FindTeachersPage() {
       {/* AI Tutor Assistant Button */}
       <button
         onClick={() => navigate("/chatbot")}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 z-50 group sm:bottom-6 sm:right-6"
       >
         <div className="relative">
           {/* Blinking Ring */}
           <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-30"></span>
 
-          {/* Hover Text */}
-          <div className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0">
+          {/* Hover Text - desktop only */}
+          <div className="absolute right-[4.5rem] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 sm:block">
             <p className="text-sm font-semibold text-slate-800">
               Talk to AI Teacher
             </p>
@@ -845,8 +901,8 @@ export default function FindTeachersPage() {
           </div>
 
           {/* Button */}
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110">
-            <Brain className="h-8 w-8 text-amber-300" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110 sm:h-16 sm:w-16">
+            <Brain className="h-7 w-7 text-amber-300 sm:h-8 sm:w-8" />
           </div>
         </div>
       </button>

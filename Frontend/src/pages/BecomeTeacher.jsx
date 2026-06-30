@@ -27,6 +27,7 @@ import {
   Brain,
   TrendingUp,
   X,
+  Menu,
 } from "lucide-react";
 
 const PURPLE = "#6C5DD3";
@@ -211,6 +212,7 @@ export default function BecomeATeacher() {
   const [consent, setConsent] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
   const [loading, setloading] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const teacher = useSelector((state) => state.teacher.teacher);
   const storedTeacher = localStorage.getItem("teacher");
   const teacherexist = storedTeacher && storedTeacher !== "undefined";
@@ -352,6 +354,11 @@ export default function BecomeATeacher() {
     });
   }, []);
 
+  // Close mobile nav menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -452,28 +459,28 @@ export default function BecomeATeacher() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans antialiased">
+    <div className="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
       {/* ── HEADER ── */}
       <header className="border-b border-slate-100 bg-white sticky top-0 z-50">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-10">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div
               onClick={() => navigate("/")}
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg cursor-pointer"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg cursor-pointer sm:h-11 sm:w-11"
             >
-              <BookOpen className="h-6 w-6 text-amber-300" />
+              <BookOpen className="h-5 w-5 text-amber-300 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <div className="text-xl font-extrabold leading-tight text-slate-900">
+              <div className="text-base font-extrabold leading-tight text-slate-900 sm:text-xl">
                 TutorMate
               </div>
-              <div className="text-xs leading-tight text-slate-400">
+              <div className="hidden text-xs leading-tight text-slate-400 sm:block">
                 Find the right teacher for you
               </div>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium lg:flex">
+          <nav className="hidden items-center gap-6 text-sm font-medium lg:flex xl:gap-8">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.link;
               return (
@@ -492,21 +499,21 @@ export default function BecomeATeacher() {
             })}
           </nav>
 
-          {user ? (
-            <div
-              onClick={() => navigate("/profile")}
-              className="flex items-center gap-3 cursor-pointer"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md">
-                {user.name?.charAt(0)?.toUpperCase() || "U"}
+          <div className="flex items-center gap-3 sm:gap-5">
+            {user ? (
+              <div
+                onClick={() => navigate("/profile")}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md sm:h-10 sm:w-10">
+                  {user.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center gap-5 cursor-pointer">
+            ) : (
+              <>
                 <a
                   onClick={() => navigate("/login")}
-                  className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:text-violet-600"
+                  className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:text-violet-600 hover:cursor-pointer"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Login
@@ -514,41 +521,85 @@ export default function BecomeATeacher() {
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white"
+                  className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white sm:px-5 sm:py-2.5 sm:text-sm"
                   style={{ backgroundColor: PURPLE }}
                 >
                   Sign Up
                 </button>
-              </div>
-            </>
-          )}
+              </>
+            )}
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile nav panel */}
+        {mobileMenuOpen && (
+          <nav className="flex flex-col gap-1 border-t border-slate-100 bg-white px-4 py-3 lg:hidden">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.link;
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => navigate(link.link)}
+                  className={`rounded-lg px-3 py-2.5 text-left text-sm font-medium ${
+                    isActive
+                      ? "bg-violet-50 font-semibold text-violet-600"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+            {!user && (
+              <button
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Login
+              </button>
+            )}
+          </nav>
+        )}
       </header>
 
       {/* ── HERO ── */}
       <section style={{ backgroundColor: PURPLE_LIGHT }}>
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-2 lg:px-10 lg:py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:gap-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-10 lg:py-20">
           <div>
             <div
-              className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
+              className="mb-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium sm:mb-5 sm:px-4 sm:text-sm"
               style={{ backgroundColor: PURPLE_MID, color: PURPLE }}
             >
               <Star className="h-3.5 w-3.5 fill-current" />
               Join 12,000+ teachers on TutorMate
             </div>
 
-            <h1 className="text-5xl font-extrabold leading-[1.15] tracking-tight text-slate-900 lg:text-6xl">
+            <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-6xl">
               Share Your Knowledge,
               <br />
               <span style={{ color: PURPLE }}>Inspire Students</span>
             </h1>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-slate-500">
+            <p className="mt-4 max-w-md text-base leading-relaxed text-slate-500 sm:mt-5 sm:text-lg">
               Join TutorMate as a teacher and connect with thousands of eager
               students near you. Set your own schedule, rates, and subjects —
               and start earning today.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3 sm:mt-8">
               <a
                 href="#apply"
                 className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors"
@@ -573,19 +624,21 @@ export default function BecomeATeacher() {
           </div>
 
           {/* Stats grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
+                className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6"
               >
                 <div
-                  className="text-3xl font-extrabold"
+                  className="text-2xl font-extrabold sm:text-3xl"
                   style={{ color: s.color }}
                 >
                   {s.value}
                 </div>
-                <div className="mt-1 text-sm text-slate-500">{s.label}</div>
+                <div className="mt-1 text-xs text-slate-500 sm:text-sm">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
@@ -593,27 +646,27 @@ export default function BecomeATeacher() {
       </section>
 
       {/* ── WHY TEACH ── */}
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-extrabold text-slate-900">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-10">
+        <div className="mb-8 text-center sm:mb-10">
+          <h2 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
             Why teach on TutorMate?
           </h2>
-          <p className="mt-3 text-base text-slate-500">
+          <p className="mt-3 text-sm text-slate-500 sm:text-base">
             Everything you need to grow as a teacher and earn on your terms.
           </p>
         </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {benefits.map((b) => {
             const Icon = b.icon;
             return (
               <div
                 key={b.title}
-                className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:p-6"
               >
                 <div
-                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full ${b.bg}`}
+                  className={`mb-4 flex h-11 w-11 items-center justify-center rounded-full sm:h-12 sm:w-12 ${b.bg}`}
                 >
-                  <Icon className={`h-6 w-6 ${b.color}`} />
+                  <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${b.color}`} />
                 </div>
                 <div className="font-semibold text-slate-900">{b.title}</div>
                 <div className="mt-1.5 text-sm leading-relaxed text-slate-500">
@@ -626,24 +679,27 @@ export default function BecomeATeacher() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section style={{ backgroundColor: PURPLE_LIGHT }} className="px-6 py-16">
+      <section
+        style={{ backgroundColor: PURPLE_LIGHT }}
+        className="px-4 py-12 sm:px-6 sm:py-16"
+      >
         <div className="mx-auto max-w-7xl lg:px-10">
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-extrabold text-slate-900">
+          <div className="mb-8 text-center sm:mb-10">
+            <h2 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
               How to get started
             </h2>
-            <p className="mt-3 text-base text-slate-500">
+            <p className="mt-3 text-sm text-slate-500 sm:text-base">
               Three simple steps to start earning as a tutor.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
             {steps.map((s) => (
               <div
                 key={s.num}
-                className="rounded-2xl border border-white bg-white p-8 text-center shadow-sm"
+                className="rounded-2xl border border-white bg-white p-6 text-center shadow-sm sm:p-8"
               >
                 <div
-                  className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full text-xl font-extrabold text-white"
+                  className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full text-lg font-extrabold text-white sm:h-14 sm:w-14 sm:text-xl"
                   style={{ backgroundColor: PURPLE }}
                 >
                   {s.num}
@@ -659,18 +715,18 @@ export default function BecomeATeacher() {
       </section>
 
       {teacherexist ? (
-        <section id="apply" className="px-6 py-16">
+        <section id="apply" className="px-4 py-12 sm:px-6 sm:py-16">
           <div className="mx-auto max-w-2xl">
-            <div className="rounded-2xl border border-emerald-200 bg-white p-8 shadow-sm relative overflow-hidden">
+            <div className="relative overflow-hidden rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm sm:p-8">
               {/* Green accent strip */}
               <div className="absolute top-0 left-0 bottom-0 w-1 bg-emerald-500 rounded-l-2xl" />
 
-              <div className="flex items-start gap-4 pl-2">
-                <div className="flex-shrink-0 h-11 w-11 rounded-full bg-emerald-50 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-emerald-500" />
+              <div className="flex items-start gap-3 pl-2 sm:gap-4">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-50 sm:h-11 sm:w-11">
+                  <CheckCircle className="h-5 w-5 text-emerald-500 sm:h-6 sm:w-6" />
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-slate-900">
                     You're already registered as a teacher
                   </h3>
@@ -680,25 +736,27 @@ export default function BecomeATeacher() {
                   </p>
 
                   {/* Mini profile card */}
-                  <div className="mt-4 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white flex-shrink-0">
-                      {initials}
+                  <div className="mt-4 flex flex-col gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 xs:flex-row xs:items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white">
+                        {initials}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-slate-900">
+                          {user?.name}
+                        </p>
+                        <p className="truncate text-xs text-slate-400">
+                          {teacher?.subjects?.join(" · ")}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900">
-                        {user?.name}
-                      </p>
-                      <p className="text-xs text-slate-400 truncate">
-                        {teacher?.subjects?.join(" · ")}
-                      </p>
-                    </div>
-                    <span className="text-xs font-medium bg-emerald-50 text-emerald-700 rounded-full px-3 py-1">
+                    <span className="w-fit flex-shrink-0 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
                       Active
                     </span>
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-5 flex gap-3 flex-wrap">
+                  <div className="mt-5 flex flex-wrap gap-3">
                     <button
                       onClick={() => navigate("/teacher/profile/edit")}
                       className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white"
@@ -720,13 +778,13 @@ export default function BecomeATeacher() {
         </section>
       ) : (
         <>
-          <section id="apply" className="px-6 py-16">
+          <section id="apply" className="px-4 py-12 sm:px-6 sm:py-16">
             <div className="mx-auto max-w-2xl lg:px-0">
-              <div className="mb-10 text-center">
-                <h2 className="text-3xl font-extrabold text-slate-900">
+              <div className="mb-8 text-center sm:mb-10">
+                <h2 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
                   Apply to become a teacher
                 </h2>
-                <p className="mt-3 text-base text-slate-500">
+                <p className="mt-3 text-sm text-slate-500 sm:text-base">
                   Fill in the details below and we'll get back to you within 48
                   hours.
                 </p>
@@ -734,7 +792,7 @@ export default function BecomeATeacher() {
 
               <form
                 onSubmit={handleSubmit}
-                className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm"
+                className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-8"
               >
                 {/* Row 1 - Basic Info */}
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -792,12 +850,12 @@ export default function BecomeATeacher() {
                         readOnly
                         placeholder="Detecting location..."
                         required
-                        className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                        className="flex-1 min-w-0 rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                       />
                       <button
                         type="button"
                         onClick={getCoordinates}
-                        className="px-3 py-2.5 rounded-lg text-xs font-semibold text-white transition-colors"
+                        className="flex-shrink-0 px-3 py-2.5 rounded-lg text-xs font-semibold text-white transition-colors"
                         style={{ backgroundColor: PURPLE }}
                         onMouseEnter={(e) =>
                           (e.currentTarget.style.backgroundColor = PURPLE_DARK)
@@ -850,7 +908,7 @@ export default function BecomeATeacher() {
                     Classes/Grades You Teach{" "}
                     <span className="text-red-500">*</span>
                   </label>
-                  <div className="grid gap-2 sm:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {CLASSES.map((cls) => (
                       <label
                         key={cls}
@@ -914,7 +972,7 @@ export default function BecomeATeacher() {
 
                 {/* Education Details */}
                 <div className="mt-6">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <label className="block text-sm font-medium text-slate-700">
                       Education Details
                     </label>
@@ -1011,7 +1069,7 @@ export default function BecomeATeacher() {
 
                 {/* Experience Details */}
                 <div className="mt-6">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <label className="block text-sm font-medium text-slate-700">
                       Teaching Experience
                     </label>
@@ -1127,7 +1185,7 @@ export default function BecomeATeacher() {
                         ]);
                       }
                     }}
-                    className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-8 text-center transition ${
+                    className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition sm:px-6 sm:py-8 ${
                       dragOver
                         ? "border-indigo-400 bg-indigo-50"
                         : "border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50/40"
@@ -1139,7 +1197,7 @@ export default function BecomeATeacher() {
                         {files.map((file, index) => (
                           <div
                             key={index}
-                            className="flex items-center justify-between rounded-lg bg-white px-3 py-2 shadow-sm border"
+                            className="flex items-center justify-between gap-2 rounded-lg bg-white px-3 py-2 shadow-sm border"
                           >
                             <span
                               className="truncate text-sm font-medium"
@@ -1148,13 +1206,13 @@ export default function BecomeATeacher() {
                               {file.name}
                             </span>
 
-                            <span className="text-xs text-slate-500">
+                            <span className="flex-shrink-0 text-xs text-slate-500">
                               {(file.size / 1024 / 1024).toFixed(2)} MB
                             </span>
                             <button
                               type="button"
                               onClick={() => removeFile(index)}
-                              className="text-red-500 hover:text-red-700 text-sm hover:cursor-pointer"
+                              className="flex-shrink-0 text-red-500 hover:text-red-700 text-sm hover:cursor-pointer"
                             >
                               ✕
                             </button>
@@ -1253,10 +1311,13 @@ export default function BecomeATeacher() {
       )}
 
       {/* ── TESTIMONIALS ── */}
-      <section style={{ backgroundColor: PURPLE_LIGHT }} className="px-6 py-16">
+      <section
+        style={{ backgroundColor: PURPLE_LIGHT }}
+        className="px-4 py-12 sm:px-6 sm:py-16"
+      >
         <div className="mx-auto max-w-7xl lg:px-10">
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-extrabold text-slate-900">
+          <div className="mb-8 text-center sm:mb-10">
+            <h2 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
               Hear from our teachers
             </h2>
           </div>
@@ -1291,20 +1352,20 @@ export default function BecomeATeacher() {
       </section>
 
       {/* ── FOOTER CTA ── */}
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-10">
         <div
-          className="rounded-3xl px-8 py-14 text-center"
+          className="rounded-3xl px-6 py-10 text-center sm:px-8 sm:py-14"
           style={{ backgroundColor: PURPLE }}
         >
-          <h2 className="text-3xl font-extrabold text-white">
+          <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
             Ready to start teaching?
           </h2>
-          <p className="mt-3 text-base text-indigo-200">
+          <p className="mt-3 text-sm text-indigo-200 sm:text-base">
             Join thousands of teachers already earning on TutorMate.
           </p>
           <a
             href="#apply"
-            className="mt-8 inline-block rounded-xl bg-white px-8 py-3.5 text-sm font-bold transition hover:bg-indigo-50"
+            className="mt-6 inline-block rounded-xl bg-white px-6 py-3 text-sm font-bold transition hover:bg-indigo-50 sm:mt-8 sm:px-8 sm:py-3.5"
             style={{ color: PURPLE }}
           >
             Apply Now — It's Free
@@ -1315,20 +1376,20 @@ export default function BecomeATeacher() {
       {/* AI Tutor Assistant Button */}
       <button
         onClick={() => navigate("/chatbot")}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 z-50 group sm:bottom-6 sm:right-6"
       >
         <div className="relative">
           <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-30"></span>
 
-          <div className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0">
+          <div className="absolute right-[4.5rem] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 sm:block">
             <p className="text-sm font-semibold text-slate-800">
               Talk to AI Teacher
             </p>
             <p className="text-xs text-slate-500">Ask doubts anytime</p>
           </div>
 
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110">
-            <Brain className="h-8 w-8 text-amber-300" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110 sm:h-16 sm:w-16">
+            <Brain className="h-7 w-7 text-amber-300 sm:h-8 sm:w-8" />
           </div>
         </div>
       </button>
