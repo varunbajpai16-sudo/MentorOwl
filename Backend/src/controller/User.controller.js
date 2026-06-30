@@ -348,6 +348,10 @@ const GetRoledUser = AsyncHandler(async (req, res) => {
     .json(new Apireponse(200, 'Roled User Found', RoledUser));
 });
 
+const changeavatar = AsyncHandler(async(req,res)=>{
+  
+})
+
 export {
   createUser,
   loginUser,

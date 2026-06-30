@@ -31,6 +31,8 @@ import {
   Monitor,
   Brain,
   CheckCircle2,
+  Menu,
+  X,
 } from "lucide-react";
 
 const subjectList = [
@@ -470,6 +472,7 @@ export default function TutorMateHomepage() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(
     location.state?.accountCreated || false,
   );
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
   useEffect(() => {
@@ -510,6 +513,12 @@ export default function TutorMateHomepage() {
       window.history.replaceState({}, document.title);
     }
   }, [location]);
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   const [selectedSubjects, setSelectedSubjects] = useState([]);
 
   const [loading, setLoading] = useState(
@@ -530,34 +539,33 @@ export default function TutorMateHomepage() {
   const topTeachers = [...teachers.teachers]
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 3);
-  console.log(topTeachers);
 
   if (loading) {
     return <HomePageLoader />;
   }
   return (
-    <div className="min-h-screen bg-white font-sans antialiased">
+    <div className="min-h-screen bg-white font-sans antialiased overflow-x-hidden">
       {showSuccessPopup && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
             <div className="flex justify-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
-                <CheckCircle2 className="h-10 w-10 text-emerald-600" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 sm:h-20 sm:w-20">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600 sm:h-10 sm:w-10" />
               </div>
             </div>
 
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
+            <h2 className="mt-5 text-center text-2xl font-extrabold text-slate-900 sm:mt-6 sm:text-3xl">
               Account Created!
             </h2>
 
-            <p className="mt-3 text-center text-slate-500">
+            <p className="mt-3 text-center text-sm text-slate-500 sm:text-base">
               Your account has been created successfully.
             </p>
 
-            <div className="mt-8 flex gap-3">
+            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
               <button
                 onClick={() => setShowSuccessPopup(false)}
-                className="flex-1 rounded-xl border border-slate-200 px-5 py-3 font-semibold"
+                className="flex-1 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold sm:text-base"
               >
                 Close
               </button>
@@ -567,7 +575,7 @@ export default function TutorMateHomepage() {
                   setShowSuccessPopup(false);
                   navigate("/findteacher");
                 }}
-                className="flex-1 rounded-xl bg-violet-600 px-5 py-3 font-semibold text-white"
+                className="flex-1 rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white sm:text-base"
               >
                 Find Teachers
               </button>
@@ -576,23 +584,23 @@ export default function TutorMateHomepage() {
         </div>
       )}
       {/* Header */}
-      <header className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg">
-              <BookOpen className="h-6 w-6 text-amber-300" />
+      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-10">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-lg sm:h-11 sm:w-11">
+              <BookOpen className="h-5 w-5 text-amber-300 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <div className="text-xl font-extrabold leading-tight text-slate-900">
+              <div className="text-base font-extrabold leading-tight text-slate-900 sm:text-xl">
                 TutorMate
               </div>
-              <div className="text-xs leading-tight text-slate-400">
+              <div className="hidden text-xs leading-tight text-slate-400 sm:block">
                 Find the right teacher for you
               </div>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-9 text-sm font-medium lg:flex">
+          <nav className="hidden items-center gap-6 text-sm font-medium lg:flex xl:gap-9">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.link;
               return (
@@ -611,21 +619,21 @@ export default function TutorMateHomepage() {
             })}
           </nav>
 
-          {user ? (
-            <div
-              onClick={() => navigate("/profile")}
-              className="flex items-center gap-3 cursor-pointer"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md">
-                {user.name?.charAt(0)?.toUpperCase() || "U"}
+          <div className="flex items-center gap-3 sm:gap-5">
+            {user ? (
+              <div
+                onClick={() => navigate("/profile")}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-sm font-bold text-white shadow-md sm:h-10 sm:w-10">
+                  {user.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center gap-5 cursor-pointer">
+            ) : (
+              <>
                 <a
                   onClick={() => navigate("/login")}
-                  className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:text-violet-600"
+                  className="hidden items-center gap-1.5 text-sm font-medium text-slate-700 sm:flex hover:text-violet-600 hover:cursor-pointer"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Login
@@ -633,34 +641,78 @@ export default function TutorMateHomepage() {
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white"
+                  className="rounded-lg px-3.5 py-2 text-xs font-semibold text-white sm:px-5 sm:py-2.5 sm:text-sm"
                   style={{ backgroundColor: PURPLE }}
                 >
                   Sign Up
                 </button>
-              </div>
-            </>
-          )}
+              </>
+            )}
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile nav panel */}
+        {mobileMenuOpen && (
+          <nav className="flex flex-col gap-1 border-t border-slate-100 bg-white px-4 py-3 lg:hidden">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.link;
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => navigate(link.link)}
+                  className={`rounded-lg px-3 py-2.5 text-left text-sm font-medium ${
+                    isActive
+                      ? "bg-violet-50 font-semibold text-violet-600"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
+            {!user && (
+              <button
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Login
+              </button>
+            )}
+          </nav>
+        )}
       </header>
 
       {/* Hero */}
       <section style={{ backgroundColor: "#F4F2FC" }}>
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:px-10 lg:py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-2 lg:px-10 lg:py-20">
           <div>
-            <h1 className="text-5xl font-extrabold leading-[1.15] tracking-tight text-slate-900 lg:text-6xl">
+            <h1 className="text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl md:text-5xl lg:text-6xl">
               Find the Right
               <br />
               <span style={{ color: PURPLE }}>Tuition Teacher</span>
               <br />
               for You
             </h1>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-slate-500">
+            <p className="mt-4 max-w-md text-base leading-relaxed text-slate-500 sm:mt-5 sm:text-lg">
               Connect with experienced and trusted tuition teachers near you and
               achieve your learning goals.
             </p>
 
-            <div className="mt-8 rounded-2xl bg-white p-5 shadow-xl shadow-indigo-100/70">
+            <div className="mt-6 rounded-2xl bg-white p-4 shadow-xl shadow-indigo-100/70 sm:mt-8 sm:p-5">
               <div className="flex flex-col gap-3 sm:flex-row">
                 <div className="relative flex flex-1 items-center gap-2 rounded-lg border border-slate-200 px-4 py-3 hover:border-violet-300 transition-colors">
                   <BookOpen className="h-4 w-4 flex-shrink-0 text-slate-400" />
@@ -729,7 +781,7 @@ export default function TutorMateHomepage() {
                   Search Teachers
                 </button>
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs sm:text-sm">
                 <span className="text-slate-500">Popular Searches:</span>
                 {[
                   "Maths Teacher",
@@ -757,19 +809,19 @@ export default function TutorMateHomepage() {
       </section>
 
       {/* Features */}
-      <section className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
-        <div className="grid gap-8 divide-y divide-slate-100 rounded-2xl border border-slate-100 bg-white px-6 py-8 shadow-sm sm:grid-cols-2 sm:divide-y-0 sm:divide-x lg:grid-cols-4">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <div className="grid grid-cols-1 gap-6 divide-y divide-slate-100 rounded-2xl border border-slate-100 bg-white px-5 py-6 shadow-sm sm:grid-cols-2 sm:gap-8 sm:divide-y-0 sm:divide-x sm:px-6 sm:py-8 lg:grid-cols-4">
           {features.map((f, i) => {
             const Icon = f.icon;
             return (
               <div
                 key={f.title}
-                className={`flex items-start gap-4 pt-8 sm:pt-0 ${i === 0 ? "" : "sm:pl-8"}`}
+                className={`flex items-start gap-4 ${i === 0 ? "" : "pt-6 sm:pt-0"} ${i % 2 === 1 ? "sm:pl-6 lg:pl-8" : i !== 0 ? "lg:pl-8" : ""}`}
               >
                 <div
-                  className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${f.bg}`}
+                  className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full sm:h-12 sm:w-12 ${f.bg}`}
                 >
-                  <Icon className={`h-6 w-6 ${f.color}`} />
+                  <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${f.color}`} />
                 </div>
                 <div>
                   <div className="font-semibold text-slate-900">{f.title}</div>
@@ -784,34 +836,34 @@ export default function TutorMateHomepage() {
       </section>
 
       {/* Subjects + Teachers */}
-      <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-10">
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[1.65fr_1fr]">
           {/* Popular Subjects */}
           <div>
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
+            <div className="mb-5 flex items-center justify-between sm:mb-6">
+              <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
                 Popular Subjects
               </h2>
               <a
                 onClick={() => navigate("/subjects")}
-                className="flex items-center gap-1 text-sm font-medium  hover:cursor-pointer hover:underline"
+                className="flex items-center gap-1 text-xs font-medium hover:cursor-pointer hover:underline sm:text-sm"
                 style={{ color: PURPLE }}
               >
-                View All Subjects <ArrowRight className="h-4 w-4" />
+                View All <ArrowRight className="h-4 w-4" />
               </a>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
               {subjects.map((s) => {
                 const Icon = s.icon;
                 return (
                   <div
                     key={s.name}
-                    className="rounded-xl border border-slate-100 bg-white p-5 text-center shadow-sm transition-shadow hover:shadow-md"
+                    className="rounded-xl border border-slate-100 bg-white p-4 text-center shadow-sm transition-shadow hover:shadow-md sm:p-5"
                   >
                     <div
-                      className={`mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full ${s.bg}`}
+                      className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full sm:h-14 sm:w-14 ${s.bg}`}
                     >
-                      <Icon className={`h-6 w-6 ${s.color}`} />
+                      <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${s.color}`} />
                     </div>
                     <div className="text-sm font-semibold text-slate-900">
                       {s.name}
@@ -830,58 +882,60 @@ export default function TutorMateHomepage() {
 
           {/* Top Rated Teachers */}
           <div>
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
+            <div className="mb-5 flex items-center justify-between sm:mb-6">
+              <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
                 Top Rated Teachers
               </h2>
               <a
                 onClick={() => navigate("/findteacher")}
-                className="flex items-center gap-1 text-sm font-medium hover:cursor-pointer hover:underline"
+                className="flex items-center gap-1 text-xs font-medium hover:cursor-pointer hover:underline sm:text-sm"
                 style={{ color: PURPLE }}
               >
-                View All Teachers <ArrowRight className="h-4 w-4" />
+                View All <ArrowRight className="h-4 w-4" />
               </a>
             </div>
             <div className="space-y-4">
               {topTeachers.map((teacher) => (
                 <div
                   key={teacher?._id || teacher?.userid?.name}
-                  className="flex items-center gap-4 rounded-xl border border-slate-100 bg-white p-4 shadow-sm"
+                  className="flex flex-col gap-3 rounded-xl border border-slate-100 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:gap-4"
                 >
-                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-base font-bold text-white shadow-md">
-                    {teacher?.userid?.name?.charAt(0)?.toUpperCase() || "U"}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-slate-900">
-                      {teacher?.userid?.name || "Unnamed Teacher"}
+                  <div className="flex items-center gap-4 sm:contents">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-base font-bold text-white shadow-md sm:h-14 sm:w-14">
+                      {teacher?.userid?.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
 
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {teacher?.subjects?.map((subj) => {
-                        const style = subjectStyles[subj] || {
-                          bg: "bg-slate-100",
-                          text: "text-slate-600",
-                        };
-                        return (
-                          <span
-                            key={subj}
-                            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
-                          >
-                            {subj}
-                          </span>
-                        );
-                      })}
-                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-slate-900">
+                        {teacher?.userid?.name || "Unnamed Teacher"}
+                      </div>
 
-                    <div className="mt-1 flex items-center gap-1 text-sm">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="font-semibold text-slate-700">
-                        {teacher?.rating ?? 0}
-                      </span>
-                      <span className="text-slate-400">
-                        ({teacher?.totalReviews ?? 0} Reviews)
-                      </span>
+                      <div className="mt-1 flex flex-wrap gap-1.5">
+                        {teacher?.subjects?.map((subj) => {
+                          const style = subjectStyles[subj] || {
+                            bg: "bg-slate-100",
+                            text: "text-slate-600",
+                          };
+                          return (
+                            <span
+                              key={subj}
+                              className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
+                            >
+                              {subj}
+                            </span>
+                          );
+                        })}
+                      </div>
+
+                      <div className="mt-1 flex items-center gap-1 text-sm">
+                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        <span className="font-semibold text-slate-700">
+                          {teacher?.rating ?? 0}
+                        </span>
+                        <span className="text-slate-400">
+                          ({teacher?.totalReviews ?? 0} Reviews)
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -889,7 +943,7 @@ export default function TutorMateHomepage() {
                     onClick={() =>
                       navigate("/teacherprofile", { state: teacher })
                     }
-                    className="flex-shrink-0 whitespace-nowrap rounded-lg border px-4 py-2 text-sm font-medium transition-colors hover:bg-indigo-50 hover:cursor-pointer"
+                    className="w-full flex-shrink-0 whitespace-nowrap rounded-lg border px-4 py-2 text-sm font-medium transition-colors hover:bg-indigo-50 hover:cursor-pointer sm:w-auto"
                     style={{ borderColor: "#D9D2F5", color: PURPLE }}
                   >
                     View Profile
@@ -903,14 +957,14 @@ export default function TutorMateHomepage() {
       {/* AI Tutor Assistant Button */}
       <button
         onClick={() => navigate("/chatbot")}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 z-50 group sm:bottom-6 sm:right-6"
       >
         <div className="relative">
           {/* Blinking Ring */}
           <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-30"></span>
 
-          {/* Hover Text */}
-          <div className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0">
+          {/* Hover Text - desktop only */}
+          <div className="absolute right-[4.5rem] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-xl border border-violet-100 bg-white px-4 py-2 shadow-lg opacity-0 invisible translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 sm:block">
             <p className="text-sm font-semibold text-slate-800">
               Talk to AI Teacher
             </p>
@@ -918,8 +972,8 @@ export default function TutorMateHomepage() {
           </div>
 
           {/* Button */}
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110">
-            <Brain className="h-8 w-8 text-amber-300" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 shadow-xl transition-all duration-300 hover:scale-110 sm:h-16 sm:w-16">
+            <Brain className="h-7 w-7 text-amber-300 sm:h-8 sm:w-8" />
           </div>
         </div>
       </button>
