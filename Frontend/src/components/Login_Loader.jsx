@@ -43,7 +43,7 @@ export default function LoginLoader() {
 
         {/* Progress Bar */}
         <div className="mx-auto mt-8 h-2 w-64 overflow-hidden rounded-full bg-slate-200">
-          <div className="h-full w-1/2 animate-[loading_2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-indigo-600 to-purple-600"></div>
+          <div className="h-full w-20 animate-loader rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600"></div>
         </div>
 
         <p className="mt-6 text-sm text-slate-400">
