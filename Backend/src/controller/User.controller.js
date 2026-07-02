@@ -11,7 +11,7 @@ import { systemPrompt } from '../system_prompt.js';
 
 const client = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
+  baseURL: 'https://api.groq.com/openai/v1',
 });
 
 const generateToken = async (userid) => {
@@ -355,18 +355,16 @@ const GetRoledUser = AsyncHandler(async (req, res) => {
 
 const chatWithGrok = async (req, res) => {
   try {
-   
-    const { message , history } = req.body;
+    const { message, history } = req.body;
 
     const response = await client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: 'llama-3.3-70b-versatile',
       messages: [
         {
           role: 'system',
-          content:
-            systemPrompt,
+          content: systemPrompt,
         },
-          ...history,
+        ...history,
         {
           role: 'user',
           content: message,
@@ -387,6 +385,33 @@ const chatWithGrok = async (req, res) => {
   }
 };
 
+const changeAvatar = AsyncHandler(async (req, res) => {
+  console.log('change avatar controller called');
+  const avatarpath = req.file.path;
+  console.log('avatarpath:', avatarpath);
+  if (!avatarpath) {
+    throw new ApiError(400, 'Avatar file is required');
+  }
+
+  const uploadedAvatar = await uploadToCloudinary(avatarpath);
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { avatar: uploadedAvatar.url },
+    { new: true },
+  );
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+  console.log('user after avatar update:', user);
+
+  return res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
 export {
   createUser,
   loginUser,
@@ -396,4 +421,5 @@ export {
   getNearbyTeachers,
   GetRoledUser,
   chatWithGrok,
+  changeAvatar,
 };

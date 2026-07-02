@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import api from "../services/axios";
 
 const PURPLE = "#6C5DD3";
 const PURPLE_DARK = "#5A4BC4";
@@ -213,12 +214,6 @@ function TeacherProfile({ user, teacher }) {
             name={user?.name}
             avatar={user?.avatar}
             isEditing={isEditing}
-            onAvatarChange={(file) => {
-              setFormData((prev) => ({
-                ...prev,
-                avatar: file,
-              }));
-            }}
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -502,12 +497,6 @@ function StudentProfile({ user, student, navigate }) {
             name={user?.name}
             avatar={user?.avatar}
             isEditing={isEditing}
-            onAvatarChange={(file) => {
-              setFormData((prev) => ({
-                ...prev,
-                avatar: file,
-              }));
-            }}
           />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -797,7 +786,10 @@ function ParentProfile({ user, parent, navigate }) {
               {children.map((child, i) => {
                 const colorSet = childCardColors[i % childCardColors.length];
                 return (
-                  <div key={i} className={`rounded-2xl p-4 sm:p-5 ${colorSet.bg}`}>
+                  <div
+                    key={i}
+                    className={`rounded-2xl p-4 sm:p-5 ${colorSet.bg}`}
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-3">
                         <div
